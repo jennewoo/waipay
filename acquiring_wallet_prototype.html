@@ -89,9 +89,9 @@
     .notice strong { color: #173969; }
     .notice button { border: 0; color: var(--brand); background: transparent; white-space: nowrap; font-weight: 600; }
 
-    .metric-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; }
+    .metric-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
     .metric {
-      position: relative; overflow: hidden; min-height: 164px;
+      position: relative; overflow: hidden; min-height: 184px;
       background: var(--card); border: 1px solid var(--line); border-radius: 13px;
       padding: 19px 20px; box-shadow: var(--shadow);
       transition: transform .18s ease, box-shadow .18s ease;
@@ -103,12 +103,31 @@
     .metric-value { margin-top: 23px; font-size: clamp(24px, 2vw, 32px); font-weight: 750; letter-spacing: -.7px; white-space: nowrap; }
     .currency { font-size: 13px; color: #8791a2; font-weight: 500; letter-spacing: 0; margin-left: 4px; }
     .metric-note { margin-top: 12px; padding-top: 12px; border-top: 1px solid #eef1f5; color: #8a94a5; font-size: 12px; line-height: 1.45; }
-    .metric.available .metric-note { border: 0; padding-top: 0; margin-top: 9px; }
+    .metric.available .metric-note { margin-top: 12px; }
     .withdraw-btn {
       width: 100%; padding: 9px; border: 0; border-radius: 8px; margin-top: 12px;
       color: #fff; background: var(--brand); font-weight: 650;
     }
     .withdraw-btn:hover { background: var(--brand-deep); }
+
+    .dispute-section { margin-bottom: 22px; }
+    .section-heading { display: flex; align-items: baseline; gap: 10px; margin: 0 0 11px; }
+    .section-heading h2 { margin: 0; font-size: 16px; }
+    .section-heading span { color: var(--muted); font-size: 12px; }
+    .dispute-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .dispute-card {
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+      min-height: 108px; padding: 18px 20px; background: #fff;
+      border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow);
+    }
+    .dispute-copy { min-width: 0; }
+    .dispute-label { display: flex; align-items: center; gap: 8px; color: #536078; font-weight: 650; }
+    .dispute-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--dispute-tone); }
+    .dispute-note { color: #8a94a5; font-size: 12px; margin-top: 8px; }
+    .dispute-values { flex: 0 0 auto; text-align: right; }
+    .dispute-count { font-size: 22px; font-weight: 750; font-variant-numeric: tabular-nums; }
+    .dispute-count small { color: #8a94a5; font-size: 12px; font-weight: 500; }
+    .dispute-amount { color: #4f5d73; font-weight: 650; margin-top: 7px; font-variant-numeric: tabular-nums; }
 
     .panel { background: #fff; border: 1px solid var(--line); border-radius: 13px; box-shadow: var(--shadow); }
     .panel-head { padding: 20px 22px 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
@@ -210,6 +229,7 @@
       .page-head { align-items: flex-start; flex-direction: column; }
       .metric-grid { grid-template-columns: 1fr; }
       .metric { min-height: 145px; }
+      .dispute-grid { grid-template-columns: 1fr; }
       .filters { grid-template-columns: 1fr; }
       .filter-actions { grid-column: auto; }
       .date-control { grid-template-columns: 1fr 10px 1fr; }
@@ -232,6 +252,7 @@
     </div>
     <div class="header-actions">
       <span class="updated" id="updatedText">数据更新于 2026-08-21 10:26</span>
+      <button class="icon-btn" id="sourceDownloadBtn" aria-label="下载原型源码" title="下载当前页面的完整 HTML 源码">↓ 下载源码</button>
       <button class="icon-btn" id="refreshBtn" aria-label="刷新数据">↻ 刷新</button>
     </div>
   </header>
@@ -240,7 +261,7 @@
     <section class="page-head">
       <div>
         <h1>资金概览</h1>
-        <div class="page-desc">查看收单资金、循环保证金及提现进度</div>
+        <div class="page-desc">查看收单资金、循环保证金、争议处理及提现进度</div>
       </div>
       <div class="channel-badge">PayPal 渠道</div>
     </section>
@@ -248,7 +269,7 @@
     <div class="notice">
       <div class="notice-main">
         <span class="info-dot">i</span>
-        <div><strong>资金规则：</strong>保证金按最近 60 天成功订单金额的 10% 循环冻结，到期后自动转入可提现金额；提现到账时效为 <strong>T+3 个工作日</strong>。</div>
+        <div><strong>资金规则：</strong>收单总金额、保证金和可提现金额均已剔除申诉未通过的订单；保证金按最近 60 天有效订单金额的 10% 循环冻结，提现到账时效为 <strong>T+3 个工作日</strong>。</div>
       </div>
       <button id="ruleBtn">查看规则详情 →</button>
     </div>
@@ -257,16 +278,17 @@
       <article class="metric" style="--tone:#13a675">
         <div class="metric-label"><span class="metric-symbol">▣</span>收单总金额</div>
         <div class="metric-value" data-key="total"></div>
-        <div class="metric-note">累计成功收单金额</div>
+        <div class="metric-note">累计有效收单金额，不含申诉未通过订单</div>
       </article>
       <article class="metric" style="--tone:#7658e8">
         <div class="metric-label"><span class="metric-symbol">◆</span>保证金</div>
         <div class="metric-value" data-key="reserve"></div>
-        <div class="metric-note">近 60 天订单金额的 10% 循环冻结</div>
+        <div class="metric-note">近 60 天有效订单的 10%，不含申诉未通过订单</div>
       </article>
       <article class="metric available" style="--tone:#1769e0">
         <div class="metric-label"><span class="metric-symbol">▤</span>可提现金额</div>
         <div class="metric-value" data-key="available"></div>
+        <div class="metric-note">可提现净额，不含申诉未通过订单</div>
         <button class="withdraw-btn" id="withdrawBtn">发起提现</button>
       </article>
       <article class="metric" style="--tone:#eb8b16">
@@ -279,6 +301,45 @@
         <div class="metric-value" data-key="withdrawn"></div>
         <div class="metric-note">累计成功结算至银行账户</div>
       </article>
+    </section>
+
+    <section class="dispute-section" aria-labelledby="disputeTitle">
+      <div class="section-heading">
+        <h2 id="disputeTitle">争议处理</h2>
+        <span>按争议订单金额统计</span>
+      </div>
+      <div class="dispute-grid">
+        <article class="dispute-card" style="--dispute-tone:#eb8b16">
+          <div class="dispute-copy">
+            <div class="dispute-label"><span class="dispute-dot"></span>争议处理中</div>
+            <div class="dispute-note">正在举证或等待平台裁定</div>
+          </div>
+          <div class="dispute-values">
+            <div class="dispute-count"><span data-dispute-count="pending"></span> <small>单</small></div>
+            <div class="dispute-amount" data-dispute-amount="pending"></div>
+          </div>
+        </article>
+        <article class="dispute-card" style="--dispute-tone:#13a675">
+          <div class="dispute-copy">
+            <div class="dispute-label"><span class="dispute-dot"></span>申诉成功</div>
+            <div class="dispute-note">争议款项已成功保留</div>
+          </div>
+          <div class="dispute-values">
+            <div class="dispute-count"><span data-dispute-count="won"></span> <small>单</small></div>
+            <div class="dispute-amount" data-dispute-amount="won"></div>
+          </div>
+        </article>
+        <article class="dispute-card" style="--dispute-tone:#dc4b5b">
+          <div class="dispute-copy">
+            <div class="dispute-label"><span class="dispute-dot"></span>申诉未通过</div>
+            <div class="dispute-note">对应金额已从钱包统计中剔除</div>
+          </div>
+          <div class="dispute-values">
+            <div class="dispute-count"><span data-dispute-count="lost"></span> <small>单</small></div>
+            <div class="dispute-amount" data-dispute-amount="lost"></div>
+          </div>
+        </article>
+      </div>
     </section>
 
     <section class="panel">
@@ -355,8 +416,9 @@
       <div class="modal-head"><div class="modal-title" id="ruleTitle">资金规则说明</div><button class="close-btn" data-close="ruleModal" aria-label="关闭">×</button></div>
       <div class="modal-body">
         <div class="timeline">
-          <div class="time-item done"><div class="time-name">订单收款成功（T 日）</div><div class="time-desc">订单金额计入收单总金额，其中 10% 进入循环保证金。</div></div>
-          <div class="time-item done"><div class="time-name">循环保证金（60 天）</div><div class="time-desc">每笔订单对应保证金独立计算 60 天，到期且无争议时自动释放。</div></div>
+          <div class="time-item done"><div class="time-name">订单收款成功（T 日）</div><div class="time-desc">有效订单金额计入收单总金额，其中 10% 进入循环保证金。</div></div>
+          <div class="time-item done"><div class="time-name">争议结果更新</div><div class="time-desc">申诉未通过的订单金额将从收单总金额、保证金和可提现金额中剔除。</div></div>
+          <div class="time-item done"><div class="time-name">循环保证金（60 天）</div><div class="time-desc">每笔有效订单对应保证金独立计算 60 天，到期且无争议时自动释放。</div></div>
           <div class="time-item"><div class="time-name">发起提现（T+3）</div><div class="time-desc">可提现资金申请后进入处理中，通常在 3 个工作日内到达绑定银行账户。</div></div>
         </div>
         <div class="modal-actions"><button class="btn primary" data-close="ruleModal">我知道了</button></div>
@@ -370,6 +432,11 @@
     const wallet = {
       name: 'PayPal', currency: 'USD', symbol: '$',
       metrics: { total: 1284756.32, reserve: 128475.63, available: 42680.54, processing: 8200, withdrawn: 1105400.15 },
+      disputes: {
+        pending: { count: 18, amount: 12460.30 },
+        won: { count: 43, amount: 28915.20 },
+        lost: { count: 7, amount: 6842.10 }
+      },
       records: [
           ['WD20260819001862', 5200, 'Bank of America · 2688', '处理中', '—', '2026-08-19 14:26', '预计 2026-08-24'],
           ['WD20260812001651', 12680.35, 'Bank of America · 2688', '已到账', '—', '2026-08-12 09:18', '2026-08-17 16:42'],
@@ -389,6 +456,8 @@
 
     function renderMetrics() {
       document.querySelectorAll('[data-key]').forEach(el => el.innerHTML = money(wallet.metrics[el.dataset.key]));
+      document.querySelectorAll('[data-dispute-count]').forEach(el => el.textContent = wallet.disputes[el.dataset.disputeCount].count);
+      document.querySelectorAll('[data-dispute-amount]').forEach(el => el.innerHTML = money(wallet.disputes[el.dataset.disputeAmount].amount));
       $('#modalBalance').textContent = `${wallet.symbol}${wallet.metrics.available.toLocaleString('en-US', {minimumFractionDigits: 2})} ${wallet.currency}`;
     }
 
@@ -475,6 +544,29 @@
       showToast('提现记录已导出');
     }
 
+    async function downloadSource() {
+      let source = '';
+      try {
+        if (location.protocol === 'http:' || location.protocol === 'https:') {
+          const response = await fetch(location.href, { cache: 'no-store' });
+          if (!response.ok) throw new Error('source request failed');
+          source = await response.text();
+        }
+      } catch (error) {
+        source = '';
+      }
+      if (!source) source = '<!doctype html>\n' + document.documentElement.outerHTML;
+      const url = URL.createObjectURL(new Blob([source], { type: 'text/html;charset=utf-8' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'acquiring-wallet-prototype.html';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      showToast('原型源码已开始下载');
+    }
+
     $('#searchBtn').addEventListener('click', applyFilters);
     $('#resetBtn').addEventListener('click', () => {
       $('#serialFilter').value = ''; $('#accountFilter').value = ''; $('#statusFilter').value = '';
@@ -483,6 +575,7 @@
     $('#tableBody').addEventListener('click', e => { const id = e.target.dataset.detail; if (id) openDetail(id); });
     $('#pagination').addEventListener('click', e => { const page = Number(e.target.dataset.page); if (page > 0 && page <= Math.ceil(filteredRecords.length/pageSize)) { currentPage = page; renderTable(); } });
     $('#exportBtn').addEventListener('click', exportCsv);
+    $('#sourceDownloadBtn').addEventListener('click', downloadSource);
     $('#withdrawBtn').addEventListener('click', () => { $('#withdrawAmount').value = ''; $('#withdrawModal').classList.add('open'); });
     $('#ruleBtn').addEventListener('click', () => $('#ruleModal').classList.add('open'));
     $('#allBtn').addEventListener('click', () => $('#withdrawAmount').value = wallet.metrics.available.toFixed(2));

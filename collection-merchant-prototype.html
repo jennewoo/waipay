@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>收款业务账户管理原型</title><style>html{color-scheme:light dark}body{margin:0;min-height:100vh}</style></head><body>
+<div id="collection-prototype" class="proto">
+  <style>
+    #collection-prototype { --p-bg:light-dark(#f4f6fa,#151a23); --p-panel:light-dark(#fff,#202733); --p-panel2:light-dark(#f8faff,#252e3b); --p-text:light-dark(#202b3c,#e8edf5); --p-muted:light-dark(#69788c,#a5b2c4); --p-line:light-dark(#e4e9f0,#394454); --p-blue:light-dark(#1769d2,#73adff); --p-bluebg:light-dark(#eaf3ff,#203a59); --p-green:light-dark(#16834d,#5bd49c); --p-greenbg:light-dark(#e8f7ef,#1e3b31); --p-orange:light-dark(#ae6a00,#ffc073); --p-orangebg:light-dark(#fff4df,#463626); --p-red:light-dark(#c93b3b,#ff8d8d); color:var(--p-text); background:var(--p-bg); font:13px/1.45 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; display:grid; grid-template-columns:172px minmax(0,1fr); width:100%; min-height:100vh; border:1px solid var(--p-line); }
+    #collection-prototype * {box-sizing:border-box}
+    #collection-prototype .side {background:var(--p-panel); border-right:1px solid var(--p-line); padding:20px 0}
+    #collection-prototype .brand {font-size:17px;font-weight:600;padding:0 20px 23px;letter-spacing:.2px}
+    #collection-prototype .navhead {color:var(--p-muted);font-size:12px;padding:14px 20px 8px}
+    #collection-prototype .navitem {display:block;width:100%;padding:11px 20px;color:var(--p-text);text-align:left;background:none;border:0}
+    #collection-prototype .navitem.active {background:var(--p-bluebg);color:var(--p-blue);border-left:3px solid var(--p-blue);padding-left:17px;font-weight:600}
+    #collection-prototype .main {min-width:0}
+    #collection-prototype .topbar {height:54px;background:var(--p-panel);border-bottom:1px solid var(--p-line);display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+    #collection-prototype .crumb {color:var(--p-muted)}
+    #collection-prototype .crumb strong {color:var(--p-text);font-weight:600}
+    #collection-prototype .user {color:var(--p-muted)}
+    #collection-prototype .downloadbtn {border:1px solid var(--p-blue);background:var(--p-panel);color:var(--p-blue);border-radius:4px;padding:6px 12px}
+    #collection-prototype .content {padding:24px}
+    #collection-prototype .heading {display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}
+    #collection-prototype h1 {font-size:20px;margin:0 0 4px;font-weight:600}
+    #collection-prototype .sub {color:var(--p-muted);font-size:12px}
+    #collection-prototype .chip {display:inline-flex;align-items:center;padding:4px 8px;background:var(--p-bluebg);color:var(--p-blue);border-radius:4px;font-size:12px}
+    #collection-prototype .panel {background:var(--p-panel);border:1px solid var(--p-line);border-radius:6px}
+    #collection-prototype .filters {display:flex;gap:9px;flex-wrap:wrap;padding:17px;border-bottom:1px solid var(--p-line)}
+    #collection-prototype input,#collection-prototype select {height:32px;border:1px solid var(--p-line);background:var(--p-panel);color:var(--p-text);border-radius:4px;padding:0 10px;font:inherit;min-width:0}
+    #collection-prototype input {width:185px}
+    #collection-prototype select {width:130px}
+    #collection-prototype button {font:inherit;cursor:pointer}
+    #collection-prototype .filterbtn {border:1px solid var(--p-blue);background:var(--p-blue);color:#fff;border-radius:4px;padding:0 15px;height:32px}
+    #collection-prototype .clearbtn {border:1px solid var(--p-line);background:var(--p-panel);color:var(--p-text);border-radius:4px;padding:0 12px;height:32px}
+    #collection-prototype .tablewrap {overflow-x:auto}
+    #collection-prototype table {width:100%;border-collapse:collapse;min-width:790px;text-align:left}
+    #collection-prototype .with-money {min-width:950px}
+    #collection-prototype th {background:var(--p-panel2);font-weight:600;color:var(--p-muted);font-size:12px;padding:12px 13px;white-space:nowrap}
+    #collection-prototype td {border-top:1px solid var(--p-line);padding:15px 13px;vertical-align:middle}
+    #collection-prototype .merchant {font-weight:600;white-space:nowrap}
+    #collection-prototype .secondary {display:block;color:var(--p-muted);font-size:12px;font-weight:400;margin-top:3px}
+    #collection-prototype .status {display:inline-flex;align-items:center;border-radius:3px;padding:3px 7px;font-size:12px;white-space:nowrap}
+    #collection-prototype .ok {color:var(--p-green);background:var(--p-greenbg)}
+    #collection-prototype .warn {color:var(--p-orange);background:var(--p-orangebg)}
+    #collection-prototype .bad {color:var(--p-red);background:var(--p-redbg)}
+    #collection-prototype .muted {color:var(--p-muted);background:var(--p-panel2)}
+    #collection-prototype .link {border:0;background:none;color:var(--p-blue);padding:3px 0;white-space:nowrap}
+    #collection-prototype .foot {padding:12px 16px;color:var(--p-muted);font-size:12px;display:flex;justify-content:space-between;gap:10px}
+    #collection-prototype .note {margin-top:12px;color:var(--p-muted);font-size:12px}
+    #collection-prototype .drawer {display:none;position:absolute;z-index:10;right:0;top:0;bottom:0;width:min(450px,100%);background:var(--p-panel);border-left:1px solid var(--p-line);box-shadow:-8px 0 24px #0002;overflow:auto}
+    #collection-prototype .drawer.open {display:block}
+    #collection-prototype .overlay {display:none;position:absolute;inset:0;z-index:9;background:#0005}
+    #collection-prototype .overlay.open {display:block}
+    #collection-prototype {position:relative}
+    #collection-prototype .drawerhead {padding:18px 22px;border-bottom:1px solid var(--p-line);display:flex;justify-content:space-between;align-items:start}
+    #collection-prototype h2 {font-size:17px;margin:0 0 4px}
+    #collection-prototype .close {border:0;background:none;color:var(--p-muted);font-size:23px;line-height:1}
+    #collection-prototype .drawerbody {padding:20px 22px}
+    #collection-prototype .section {border:1px solid var(--p-line);border-radius:5px;margin-bottom:14px;overflow:hidden}
+    #collection-prototype .section h3 {font-size:14px;margin:0;padding:12px 14px;background:var(--p-panel2)}
+    #collection-prototype .facts {display:grid;grid-template-columns:105px 1fr;gap:12px 10px;padding:14px}
+    #collection-prototype .facts dt {color:var(--p-muted)}
+    #collection-prototype .facts dd {margin:0}
+    #collection-prototype .hint {padding:12px 14px;color:var(--p-muted);font-size:12px;border-top:1px solid var(--p-line)}
+    #collection-prototype .balance {padding:14px}
+    #collection-prototype .balancegroup + .balancegroup {margin-top:16px}
+    #collection-prototype .balancegroup strong {display:block;margin-bottom:8px;font-weight:600}
+    #collection-prototype .balancerow {display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:10px 12px;border:1px solid var(--p-line);border-radius:4px;color:var(--p-muted)}
+    #collection-prototype .balancerow span {display:block;color:var(--p-text);margin-top:5px}
+    #collection-prototype .va-table {width:100%;min-width:0}
+    #collection-prototype .va-table th,#collection-prototype .va-table td {padding:9px 7px;font-size:12px}
+    #collection-prototype .va-scroll {overflow-x:auto;padding:0 12px 12px}
+    @media(max-width:650px){#collection-prototype{grid-template-columns:1fr}#collection-prototype .side{display:none}#collection-prototype .content{padding:14px}#collection-prototype .topbar{padding:0 14px}#collection-prototype .filters{padding:12px}#collection-prototype input,#collection-prototype select{flex:1 1 140px;width:auto}#collection-prototype .heading{align-items:center}}
+  </style>
+  <aside class="side" aria-label="渠道导航">
+    <div class="brand">运营管理平台</div>
+    <div class="navhead">收款</div>
+    <button type="button" class="navitem active" data-business="dogpay">dogpay账户管理</button>
+    <button type="button" class="navitem" data-business="b2b">B2B账户管理</button>
+    <button type="button" class="navitem" data-business="osl">OSL账户管理</button>
+  </aside>
+  <main class="main">
+    <div class="topbar"><div class="crumb">收款 / <strong id="p-crumb">dogpay账户管理</strong></div><button type="button" class="downloadbtn" id="p-download">下载源代码</button></div>
+    <div class="content">
+      <div class="heading"><div><h1 id="p-heading">dogpay账户管理</h1><div class="sub" id="p-description">查看商户的业务权限、实名状态和资金数据</div></div></div>
+      <section class="panel" aria-label="收款商户列表">
+        <div class="filters">
+          <input id="p-search" type="search" aria-label="搜索商户账号或别名" placeholder="商户账号 / 商户别名">
+          <select id="p-account" aria-label="账号状态"><option value="">账号状态：全部</option><option value="启用">启用</option><option value="禁用">禁用</option></select>
+          <select id="p-cert" aria-label="认证状态"><option value="">认证状态：全部</option><option value="success">认证成功</option><option value="none">未认证</option></select>
+          <select id="p-review" aria-label="审核状态"><option value="">审核状态：全部</option><option value="审核成功">审核成功</option><option value="待审核">待审核</option><option value="暂存">暂存</option></select>
+          <select id="p-perm" aria-label="收款业务"><option value="">收款业务：全部</option><option value="open">已开通</option><option value="closed">未开通</option><option value="uncertified">未认证</option></select>
+          <button type="button" class="filterbtn" id="p-go">查询</button><button type="button" class="clearbtn" id="p-reset">重置</button>
+        </div>
+        <div class="tablewrap"><table id="p-table"><thead><tr id="p-columns"></tr></thead><tbody id="p-rows"></tbody></table></div>
+        <div class="foot"><span id="p-count" aria-live="polite"></span></div>
+      </section>
+    </div>
+  </main>
+  <div class="overlay" id="p-overlay"></div>
+  <aside class="drawer" id="p-drawer" role="dialog" aria-modal="true" aria-label="商户渠道详情">
+    <div class="drawerhead"><div><h2 id="p-title">商户渠道详情</h2><div class="sub" id="p-subtitle"></div></div><button type="button" class="close" id="p-close" aria-label="关闭详情">×</button></div>
+    <div class="drawerbody" id="p-detail"></div>
+  </aside>
+  <script>
+    (() => {
+      const root=document.getElementById('collection-prototype');
+      const dogpayRows=[
+        {id:'13200000050',name:'test-DogPay-50',account:'启用',cert:'success',certText:'认证成功',review:'审核成功',reviewAt:'2026-09-15 14:25:10',perm:'open',permText:'已开通',subject:'企业',cn:'测试香港公司',en:'Test HK Company',updated:'2026-09-15 14:00:48'},
+        {id:'13200000049',name:'test-DogPay-49',account:'启用',cert:'success',certText:'认证成功',review:'审核成功',reviewAt:'2026-09-15 11:40:36',perm:'uncertified',permText:'未认证',subject:'企业',cn:'香港公司',en:'Hong Kong Ent…',updated:'2026-09-15 11:22:07'},
+        {id:'13200000048',name:'test-DogPay-48',account:'启用',cert:'success',certText:'认证成功',review:'审核成功',reviewAt:'2026-09-14 12:05:41',perm:'uncertified',permText:'未认证',subject:'企业',cn:'潮标科技有限公司',en:'TEST TECHNO…',updated:'2026-09-14 11:28:17'},
+        {id:'13200000047',name:'xzs-test-DogPay-47',account:'启用',cert:'none',certText:'未认证',review:'待审核',perm:'uncertified',permText:'未认证',subject:'企业',cn:'丁强集团',en:'Test Strong Co…',updated:'2026-09-08 11:45:51'},
+        {id:'13200000045',name:'xzs-test-dogpay',account:'启用',cert:'none',certText:'未认证',review:'暂存',perm:'closed',permText:'未开通',subject:'个人',cn:'—',en:'—',updated:'2026-09-08 17:20:22'},
+        {id:'13200000044',name:'xzs-test-DogPay-44',account:'禁用',cert:'success',certText:'认证成功',review:'审核成功',reviewAt:'2026-09-07 10:30:18',perm:'closed',permText:'未开通',subject:'企业',cn:'—',en:'—',updated:'2026-09-07 09:12:06'}
+      ];
+      const b2bRows=[
+        {id:'13800000001',name:'海川贸易',account:'启用',cert:'success',certText:'认证成功',review:'审核成功',reviewAt:'2026-09-16 11:05:27',perm:'open',permText:'已开通',subject:'企业',cn:'海川贸易有限公司',en:'Haichuan Trading Ltd.',updated:'2026-09-16 10:24:18',currency:'CNY',balance:'31,960.80',unposted:'3,500.00'},
+        {id:'13800000002',name:'云帆商贸',account:'启用',cert:'success',certText:'认证成功',review:'审核成功',reviewAt:'2026-09-15 16:40:12',perm:'closed',permText:'未开通',subject:'企业',cn:'云帆商贸有限公司',en:'Yunfan Commerce Ltd.',updated:'2026-09-15 16:06:32',currency:'CNY',balance:'9,510.25',unposted:'600.00'},
+        {id:'13800000003',name:'星河科技',account:'启用',cert:'none',certText:'未认证',review:'待审核',perm:'uncertified',permText:'未认证',subject:'企业',cn:'星河科技有限公司',en:'Galaxy Technology Ltd.',updated:'2026-09-14 09:35:04',currency:'CNY',balance:'0.00',unposted:'0.00'},
+        {id:'13800000004',name:'远景服务',account:'禁用',cert:'none',certText:'未认证',review:'暂存',perm:'closed',permText:'未开通',subject:'企业',cn:'远景服务有限公司',en:'Vista Services Ltd.',updated:'2026-09-12 14:18:56',currency:'CNY',balance:'1,200.00',unposted:'1,200.00'}
+      ];
+      const oslRows=[
+        {id:'13500000010',name:'OSL-星港贸易',account:'启用',cert:'success',certText:'认证成功',review:'审核成功',reviewAt:'2026-09-16 14:15:06',perm:'open',permText:'已开通',subject:'企业',cn:'星港贸易有限公司',en:'Star Harbor Trading Ltd.',updated:'2026-09-16 13:40:22'},
+        {id:'13500000011',name:'OSL-联盛科技',account:'启用',cert:'success',certText:'认证成功',review:'审核成功',reviewAt:'2026-09-15 11:03:42',perm:'open',permText:'已开通',subject:'企业',cn:'联盛科技有限公司',en:'Liansheng Technology Ltd.',updated:'2026-09-15 10:18:09'},
+        {id:'13200000037',name:'xzs-test-37',account:'启用',cert:'none',certText:'未认证',review:'待审核',perm:'uncertified',permText:'未认证',subject:'个人',cn:'—',en:'—',updated:'2026-06-24 10:40:23'},
+        {id:'13500000012',name:'OSL-远航商贸',account:'禁用',cert:'none',certText:'未认证',review:'暂存',perm:'closed',permText:'未开通',subject:'企业',cn:'远航商贸有限公司',en:'Voyage Commerce Ltd.',updated:'2026-09-12 08:21:11'}
+      ];
+      const fiatVaMap={
+        dogpay:{
+          '13200000050':[
+            {va:'汇丰银行',account:'尾号 5001',currency:'CNY',available:'8,000.00'},
+            {va:'渣打银行',account:'尾号 5002',currency:'USD',available:'1,250.00'},
+            {va:'汇丰银行',account:'尾号 5003',currency:'CNY',available:'4,580.40'}
+          ],
+          '13200000049':[
+            {va:'汇丰银行',account:'尾号 4901',currency:'CNY',available:'5,920.00'},
+            {va:'中银香港',account:'尾号 4902',currency:'HKD',available:'3,000.00'}
+          ],
+          '13200000048':[{va:'汇丰银行',account:'尾号 4801',currency:'CNY',available:'1,240.25'}],
+          '13200000045':[{va:'渣打银行',account:'尾号 4501',currency:'CNY',available:'320.00'}],
+          '13200000044':[{va:'中银香港',account:'尾号 4401',currency:'CNY',available:'2,400.00'}]
+        },
+        osl:{
+          '13500000010':[
+            {va:'中银香港',account:'尾号 1001',currency:'HKD',available:'18,600.00'},
+            {va:'星展银行',account:'尾号 1002',currency:'USD',available:'4,500.00'},
+            {va:'中银香港',account:'尾号 1003',currency:'HKD',available:'7,800.00'}
+          ],
+          '13500000011':[
+            {va:'中银香港',account:'尾号 1101',currency:'HKD',available:'7,200.00'},
+            {va:'星展银行',account:'尾号 1102',currency:'USD',available:'1,300.00'}
+          ]
+        }
+      };
+      const cryptoMap={
+        dogpay:{
+          '13200000050':[
+            {coin:'USDT',chain:'TRON',available:'2,140.500000'},
+            {coin:'USDT',chain:'Ethereum',available:'1,100.000000'},
+            {coin:'BTC',chain:'Bitcoin',available:'0.28000000'},
+            {coin:'USDC',chain:'Ethereum',available:'560.000000'}
+          ],
+          '13200000049':[
+            {coin:'USDT',chain:'TRON',available:'450.000000'},
+            {coin:'USDT',chain:'Ethereum',available:'200.000000'}
+          ],
+          '13200000044':[{coin:'USDT',chain:'TRON',available:'125.000000'}]
+        },
+        osl:{
+          '13500000010':[
+            {coin:'USDT',chain:'Ethereum',available:'8,600.000000'},
+            {coin:'BTC',chain:'Bitcoin',available:'0.76000000'},
+            {coin:'ETH',chain:'Ethereum',available:'12.35000000'}
+          ],
+          '13500000011':[
+            {coin:'USDT',chain:'TRON',available:'3,200.000000'},
+            {coin:'USDC',chain:'Ethereum',available:'900.000000'}
+          ]
+        }
+      };
+      let current='dogpay';
+      const businessName=()=>current==='dogpay'?'dogpay':current==='osl'?'OSL':'B2B';
+      const rows=()=>current==='dogpay'?dogpayRows:current==='osl'?oslRows:b2bRows;
+      const fiatVas=r=>current==='b2b'?[]:(fiatVaMap[current][r.id]||[]);
+      const cryptoAssets=r=>current==='b2b'?[]:(cryptoMap[current][r.id]||[]);
+      const $=s=>root.querySelector(s);
+      const badge=(v,t)=>`<span class="status ${v}">${t}</span>`;
+      const permStyle=p=>p==='open'?'ok':p==='uncertified'?'bad':'muted';
+      const vaDetail=r=>{
+        const list=fiatVas(r);
+        return `<div class="section"><h3>法币VA账户（${list.length} 个）</h3><div class="va-scroll"><table class="va-table"><thead><tr><th>VA账户（银行）</th><th>法币币种</th><th>可用余额</th></tr></thead><tbody>${list.length?list.map(x=>`<tr><td>${x.va}<span class="secondary">${x.account}</span></td><td>${x.currency}</td><td>${x.available}</td></tr>`).join(''):'<tr><td colspan="3">暂无VA账户</td></tr>'}</tbody></table></div></div>`;
+      };
+      const cryptoDetail=r=>{
+        const list=cryptoAssets(r);
+        return `<div class="section"><h3>数币余额</h3><div class="va-scroll"><table class="va-table"><thead><tr><th>币种</th><th>链</th><th>可用余额</th></tr></thead><tbody>${list.length?list.map(x=>`<tr><td>${x.coin}</td><td>${x.chain}</td><td>${x.available}</td></tr>`).join(''):'<tr><td colspan="3">暂无数币余额</td></tr>'}</tbody></table></div></div>`;
+      };
+      function render(){
+        const q=$('#p-search').value.trim().toLowerCase(),a=$('#p-account').value,c=$('#p-cert').value,v=$('#p-review').value,p=$('#p-perm').value;
+        const shown=rows().filter(r=>(!q||(r.id+r.name).toLowerCase().includes(q))&&(!a||r.account===a)&&(!c||r.cert===c)&&(!v||r.review===v)&&(!p||r.perm===p));
+        $('#p-crumb').textContent=`${businessName()}账户管理`;
+        $('#p-heading').textContent=`${businessName()}账户管理`;
+        root.querySelectorAll('[data-business]').forEach(b=>b.classList.toggle('active',b.dataset.business===current));
+        $('#p-table').classList.toggle('with-money',current==='b2b');
+        const metricHeaders=current==='b2b'?'<th>余额</th><th>未上账余额</th>':'';
+        $('#p-columns').innerHTML=`<th>商户账号</th><th>商户别名</th><th>账号状态</th><th>认证状态</th><th>审核状态</th><th>收款业务</th>${metricHeaders}<th>操作</th>`;
+        $('#p-rows').innerHTML=shown.length?shown.map(r=>{
+          const metrics=current==='b2b'?`<td>${r.currency} ${r.balance}</td><td>${r.currency} ${r.unposted}</td>`:'';
+          return `<tr><td><span class="merchant">${r.id}</span></td><td>${r.name}</td><td>${badge(r.account==='启用'?'ok':'muted',r.account)}</td><td>${badge(r.cert==='success'?'ok':'muted',r.certText)}</td><td>${badge(r.review==='审核成功'?'ok':'warn',r.review)}</td><td>${badge(permStyle(r.perm),r.permText)}</td>${metrics}<td><button type="button" class="link" data-id="${r.id}">查看详情</button></td></tr>`;
+        }).join(''):`<tr><td colspan="${current==='b2b'?9:7}">没有符合条件的商户</td></tr>`;
+        $('#p-count').textContent=`共 ${shown.length} 条`;
+      }
+      function open(r){
+        $('#p-title').textContent=r.name;
+        $('#p-subtitle').textContent=`${r.id} · ${businessName()}`;
+        const balance=current==='b2b'
+          ? `<div class="section"><h3>资金数据</h3><div class="balance"><div class="balancerow"><div>币种<span>${r.currency}</span></div><div>余额<span>${r.balance}</span></div><div>未上账余额<span>${r.unposted}</span></div></div></div></div>`
+          : `${vaDetail(r)}${cryptoDetail(r)}`;
+        $('#p-detail').innerHTML=`
+          <div class="section"><h3>商户信息</h3><dl class="facts"><dt>商户账号</dt><dd>${r.id}</dd><dt>商户别名</dt><dd>${r.name}</dd><dt>账号状态</dt><dd>${r.account}</dd></dl></div>
+          <div class="section"><h3>实名认证</h3><dl class="facts"><dt>认证业务</dt><dd>${businessName()}</dd><dt>认证状态</dt><dd>${r.certText}</dd><dt>审核状态</dt><dd>${r.review}</dd>${r.review==='审核成功'?`<dt>审核时间</dt><dd>${r.reviewAt}</dd>`:''}<dt>认证主体</dt><dd>${r.subject}</dd><dt>企业中文名</dt><dd>${r.cn}</dd><dt>企业英文名</dt><dd>${r.en}</dd><dt>提交时间</dt><dd>${r.updated}</dd></dl></div>
+          <div class="section"><h3>业务权限</h3><dl class="facts"><dt>收款业务</dt><dd>${businessName()}</dd><dt>权限状态</dt><dd>${badge(permStyle(r.perm),r.permText)}</dd></dl></div>
+          ${balance}`;
+        $('#p-overlay').classList.add('open');$('#p-drawer').classList.add('open');$('#p-close').focus();
+      }
+      function close(){ $('#p-overlay').classList.remove('open');$('#p-drawer').classList.remove('open'); }
+      $('#p-go').addEventListener('click',render);
+      $('#p-search').addEventListener('keydown',e=>{if(e.key==='Enter')render()});
+      $('#p-reset').addEventListener('click',()=>{['#p-search','#p-account','#p-cert','#p-review','#p-perm'].forEach(s=>$(s).value='');render()});
+      $('#p-rows').addEventListener('click',e=>{const b=e.target.closest('button[data-id]');if(b)open(rows().find(r=>r.id===b.dataset.id))});
+      root.querySelectorAll('[data-business]').forEach(b=>b.addEventListener('click',()=>{current=b.dataset.business;['#p-search','#p-account','#p-cert','#p-review','#p-perm'].forEach(s=>$(s).value='');close();render()}));
+      $('#p-close').addEventListener('click',close);$('#p-overlay').addEventListener('click',close);
+      $('#p-download').addEventListener('click',()=>{
+        const source='<!'+'doctype html>\n'+document.documentElement.outerHTML;
+        const url=URL.createObjectURL(new Blob([source],{type:'text/html;charset=utf-8'}));
+        const link=document.createElement('a');link.href=url;link.download='collection-merchant-prototype.html';document.body.appendChild(link);link.click();link.remove();
+        setTimeout(()=>URL.revokeObjectURL(url),1000);
+      });
+      root.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+      render();
+    })();
+  </script>
+</div>
+
+</body></html>

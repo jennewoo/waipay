@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>账号列表 · 商户管理</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="侧边导航">
+        <div class="brand">商户</div>
+        <div class="nav-group"><span class="chevron">⌄</span> 商户管理</div>
+        <nav>
+          <a href="#" class="nav-link">商户列表</a>
+          <a href="#" class="nav-link active" aria-current="page">账号列表</a>
+          <a href="#" class="nav-link">实名认证</a>
+          <a href="#" class="nav-link">业务权限</a>
+        </nav>
+      </aside>
+
+      <main class="main">
+        <header class="page-header">
+          <div class="breadcrumb">商户管理 <span>/</span> <strong>账号列表</strong></div>
+        </header>
+
+        <section class="content" aria-labelledby="page-title">
+          <div class="title-row">
+            <div>
+              <h1 id="page-title">账号列表</h1>
+            </div>
+          </div>
+
+          <form class="filters" id="filter-form">
+            <label class="field search"><span class="sr-only">商户账号</span><input name="account" placeholder="商户账号" autocomplete="off" /><span class="search-icon">⌕</span></label>
+            <label class="field"><span class="sr-only">账号类型</span><select name="type"><option value="">账号类型</option><option value="主账号">主账号</option><option value="子账号">子账号</option></select></label>
+            <label class="field search"><span class="sr-only">所属商户</span><input name="merchant" placeholder="所属商户" autocomplete="off" /><span class="search-icon">⌕</span></label>
+            <label class="field search"><span class="sr-only">商户别名</span><input name="alias" placeholder="商户别名" autocomplete="off" /><span class="search-icon">⌕</span></label>
+            <label class="field search"><span class="sr-only">代理商</span><input name="agent" placeholder="代理商" autocomplete="off" /><span class="search-icon">⌕</span></label>
+            <label class="field"><span class="sr-only">状态</span><select name="status"><option value="">全部状态</option><option value="启用">启用</option><option value="禁用">禁用</option><option value="冻结">冻结</option></select></label>
+            <label class="field date-field"><span class="sr-only">注册开始日期</span><input type="date" name="from" title="注册开始日期" /></label>
+            <span class="date-separator">至</span>
+            <label class="field date-field"><span class="sr-only">注册结束日期</span><input type="date" name="to" title="注册结束日期" /></label>
+            <button class="button primary query" type="submit">查询</button>
+            <button class="button" type="reset">重置</button>
+          </form>
+
+          <div class="table-card">
+            <div class="table-scroll">
+              <table>
+                <thead><tr>
+                  <th>商户账号</th><th>账号类型</th><th>所属商户</th><th>商户别名</th><th>代理商</th><th>状态</th><th>注册时间</th><th>上一次登录时间</th><th>身份验证器</th><th>操作</th>
+                </tr></thead>
+                <tbody id="account-rows"></tbody>
+              </table>
+            </div>
+            <div class="table-footer"><span id="result-count"></span><div class="pager" id="pager"></div></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal-backdrop" id="modal-backdrop" hidden>
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-head"><h2 id="modal-title"></h2><button class="icon-button" id="modal-close" aria-label="关闭">×</button></div>
+        <div id="modal-body"></div>
+        <div class="modal-actions"><button class="button" id="modal-cancel">取消</button><button class="button primary" id="modal-confirm">确认</button></div>
+      </div>
+    </div>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <script src="./script.js"></script>
+  </body>
+</html>

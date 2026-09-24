@@ -9,7 +9,7 @@
 <style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255), rgb(24 24 24))}html,body{margin:0}body{box-sizing:border-box;padding:1rem;background:inherit}iframe{display:block;width:100%;height:calc(100vh - 2rem);margin:0 auto;border:0}</style>
 </head>
 <body>
-<iframe id="codex-visualization" sandbox="allow-scripts" referrerpolicy="no-referrer" title="数据看板" data-srcdoc="&lt;!doctype html&gt;
+<iframe id="codex-visualization" sandbox="allow-scripts allow-downloads" referrerpolicy="no-referrer" title="数据看板" data-srcdoc="&lt;!doctype html&gt;
 &lt;html lang=&quot;en&quot; data-visualize-standalone&gt;
 &lt;head&gt;
 &lt;meta charset=&quot;utf-8&quot;&gt;
@@ -1440,10 +1440,10 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;div class=&quot;sd-date-fields&quot; id=&quot;sd-date-fields&quot; hidden&gt;&lt;div class=&quot;sd-field&quot;&gt;&lt;label for=&quot;sd-start&quot;&gt;开始日期&lt;/label&gt;&lt;input class=&quot;cursor-interaction&quot; id=&quot;sd-start&quot; type=&quot;date&quot; value=&quot;2026-09-18&quot; min=&quot;2026-09-11&quot; max=&quot;2026-09-24&quot;&gt;&lt;/div&gt;&lt;span class=&quot;sd-date-sep&quot;&gt;至&lt;/span&gt;&lt;div class=&quot;sd-field&quot;&gt;&lt;label for=&quot;sd-end&quot;&gt;结束日期&lt;/label&gt;&lt;input class=&quot;cursor-interaction&quot; id=&quot;sd-end&quot; type=&quot;date&quot; value=&quot;2026-09-24&quot; min=&quot;2026-09-11&quot; max=&quot;2026-09-24&quot;&gt;&lt;/div&gt;&lt;/div&gt;
       &lt;span class=&quot;sd-filter-note&quot;&gt;金额单位：MXN · 按交易成功时间归属&lt;/span&gt;
     &lt;/section&gt;
-    &lt;div class=&quot;sd-overview-head&quot;&gt;&lt;div&gt;&lt;h2&gt;累计概览&lt;/h2&gt;&lt;span class=&quot;sd-overview-caption&quot;&gt;与下方每日明细分工：这里只看区间累计结果&lt;/span&gt;&lt;/div&gt;&lt;span class=&quot;sd-overview-caption&quot; id=&quot;sd-overview-period&quot;&gt;最近7日&lt;/span&gt;&lt;/div&gt;
+    &lt;div class=&quot;sd-overview-head&quot;&gt;&lt;div&gt;&lt;h2&gt;累计概览&lt;/h2&gt;&lt;/div&gt;&lt;span class=&quot;sd-overview-caption&quot; id=&quot;sd-overview-period&quot;&gt;最近7日&lt;/span&gt;&lt;/div&gt;
     &lt;section class=&quot;sd-overview-grid&quot; id=&quot;sd-overview-grid&quot; aria-label=&quot;区间累计概览&quot; aria-live=&quot;polite&quot;&gt;&lt;/section&gt;
     &lt;section class=&quot;sd-daily-panel&quot; aria-label=&quot;每日汇总列表&quot;&gt;
-      &lt;div class=&quot;sd-table-heading&quot;&gt;&lt;div class=&quot;sd-table-heading-left&quot;&gt;&lt;h2&gt;每日汇总&lt;/h2&gt;&lt;span class=&quot;sd-table-subtitle&quot; id=&quot;sd-row-count&quot;&gt;共 7 天&lt;/span&gt;&lt;span class=&quot;sd-table-subtitle&quot; id=&quot;sd-field-note&quot;&gt;金额字段直接按收款列表口径汇总&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;sd-table-heading-right&quot;&gt;&lt;div class=&quot;sd-tabs&quot; id=&quot;sd-tabs&quot; role=&quot;tablist&quot; aria-label=&quot;业务类型&quot;&gt;&lt;button class=&quot;cursor-interaction&quot; type=&quot;button&quot; role=&quot;tab&quot; data-type=&quot;collect&quot; aria-selected=&quot;true&quot; aria-pressed=&quot;true&quot;&gt;收款&lt;/button&gt;&lt;button class=&quot;cursor-interaction&quot; type=&quot;button&quot; role=&quot;tab&quot; data-type=&quot;pay&quot; aria-selected=&quot;false&quot; aria-pressed=&quot;false&quot;&gt;付款&lt;/button&gt;&lt;/div&gt;&lt;span class=&quot;sd-sort-label&quot;&gt;日期 ↓ 降序&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;sd-table-heading&quot;&gt;&lt;div class=&quot;sd-table-heading-left&quot;&gt;&lt;h2&gt;每日汇总&lt;/h2&gt;&lt;span class=&quot;sd-table-subtitle&quot; id=&quot;sd-row-count&quot;&gt;共 7 天&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;sd-table-heading-right&quot;&gt;&lt;div class=&quot;sd-tabs&quot; id=&quot;sd-tabs&quot; role=&quot;tablist&quot; aria-label=&quot;业务类型&quot;&gt;&lt;button class=&quot;cursor-interaction&quot; type=&quot;button&quot; role=&quot;tab&quot; data-type=&quot;collect&quot; aria-selected=&quot;true&quot; aria-pressed=&quot;true&quot;&gt;收款&lt;/button&gt;&lt;button class=&quot;cursor-interaction&quot; type=&quot;button&quot; role=&quot;tab&quot; data-type=&quot;pay&quot; aria-selected=&quot;false&quot; aria-pressed=&quot;false&quot;&gt;付款&lt;/button&gt;&lt;/div&gt;&lt;span class=&quot;sd-sort-label&quot;&gt;日期 ↓ 降序&lt;/span&gt;&lt;button class=&quot;sd-refresh cursor-interaction&quot; id=&quot;sd-export&quot; type=&quot;button&quot;&gt;导出列表&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;
       &lt;div class=&quot;sd-table-wrap&quot; id=&quot;sd-table-wrap&quot; aria-live=&quot;polite&quot;&gt;&lt;/div&gt;
       &lt;div class=&quot;sd-pagination&quot;&gt;&lt;span id=&quot;sd-page-info&quot;&gt;第 1 页，共 1 页&lt;/span&gt;&lt;div class=&quot;sd-page-actions&quot;&gt;&lt;button class=&quot;cursor-interaction&quot; id=&quot;sd-prev&quot; type=&quot;button&quot; aria-label=&quot;上一页&quot;&gt;‹&lt;/button&gt;&lt;button class=&quot;cursor-interaction&quot; id=&quot;sd-next&quot; type=&quot;button&quot; aria-label=&quot;下一页&quot;&gt;›&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;
     &lt;/section&gt;
@@ -1500,7 +1500,18 @@ html&gt;body{padding:0}&lt;/style&gt;
     const head=isCollect?&#x27;&lt;tr&gt;&lt;th&gt;日期&lt;/th&gt;&lt;th class=&quot;sd-num&quot;&gt;创建订单&lt;/th&gt;&lt;th class=&quot;sd-num&quot;&gt;成功订单&lt;/th&gt;&lt;th class=&quot;sd-num&quot;&gt;成功率&lt;/th&gt;&lt;th class=&quot;sd-num&quot;&gt;成功收款笔数&lt;/th&gt;&lt;th class=&quot;sd-num&quot;&gt;实际收款金额&lt;/th&gt;&lt;th class=&quot;sd-num&quot;&gt;到账金额&lt;/th&gt;&lt;th class=&quot;sd-num&quot;&gt;手续费&lt;/th&gt;&lt;/tr&gt;&#x27;:&#x27;&lt;tr&gt;&lt;th&gt;日期&lt;/th&gt;&lt;th class=&quot;sd-num&quot;&gt;付款申请&lt;/th&gt;&lt;th class=&quot;sd-num&quot;&gt;成功笔数&lt;/th&gt;&lt;th class=&quot;sd-num&quot;&gt;处理中&lt;/th&gt;&lt;th class=&quot;sd-num&quot;&gt;失败&lt;/th&gt;&lt;th class=&quot;sd-num&quot;&gt;成功率&lt;/th&gt;&lt;th class=&quot;sd-num&quot;&gt;付款金额&lt;/th&gt;&lt;th class=&quot;sd-num&quot;&gt;到账金额&lt;/th&gt;&lt;th class=&quot;sd-num&quot;&gt;手续费&lt;/th&gt;&lt;/tr&gt;&#x27;;
     const body=visible.length?visible.map(isCollect?collectRow:payRow).join(&#x27;&#x27;):&#x27;&lt;tr&gt;&lt;td colspan=&quot;9&quot; class=&quot;sd-zero&quot;&gt;当前日期范围没有示例数据&lt;/td&gt;&lt;/tr&gt;&#x27;;
     root.querySelector(&#x27;#sd-table-wrap&#x27;).innerHTML=`&lt;table&gt;&lt;caption class=&quot;sr-only&quot;&gt;${isCollect?&#x27;收款&#x27;:&#x27;付款&#x27;}每日汇总，按日期降序&lt;/caption&gt;&lt;thead&gt;${head}&lt;/thead&gt;&lt;tbody&gt;${body}&lt;/tbody&gt;&lt;/table&gt;`;
-    root.querySelector(&#x27;#sd-row-count&#x27;).textContent=`共 ${rows.length} 天 · ${isCollect?&#x27;收款&#x27;:&#x27;付款&#x27;}数据`;root.querySelector(&#x27;#sd-field-note&#x27;).textContent=`金额字段直接按${isCollect?&#x27;收款&#x27;:&#x27;付款&#x27;}列表口径汇总`;root.querySelector(&#x27;#sd-page-info&#x27;).textContent=`第 ${state.page} 页，共 ${pageCount} 页`;root.querySelector(&#x27;#sd-prev&#x27;).disabled=state.page&lt;=1;root.querySelector(&#x27;#sd-next&#x27;).disabled=state.page&gt;=pageCount;
+    root.querySelector(&#x27;#sd-row-count&#x27;).textContent=`共 ${rows.length} 天 · ${isCollect?&#x27;收款&#x27;:&#x27;付款&#x27;}数据`;root.querySelector(&#x27;#sd-page-info&#x27;).textContent=`第 ${state.page} 页，共 ${pageCount} 页`;root.querySelector(&#x27;#sd-prev&#x27;).disabled=state.page&lt;=1;root.querySelector(&#x27;#sd-next&#x27;).disabled=state.page&gt;=pageCount;
+  }
+  function exportRows(){
+    const rows=activeRows(),isCollect=state.type===&#x27;collect&#x27;;
+    const headers=isCollect?[&#x27;日期&#x27;,&#x27;创建订单&#x27;,&#x27;成功订单&#x27;,&#x27;成功率&#x27;,&#x27;成功收款笔数&#x27;,&#x27;实际收款金额（MXN）&#x27;,&#x27;到账金额（MXN）&#x27;,&#x27;手续费（MXN）&#x27;]:[&#x27;日期&#x27;,&#x27;付款申请&#x27;,&#x27;成功笔数&#x27;,&#x27;处理中&#x27;,&#x27;失败&#x27;,&#x27;成功率&#x27;,&#x27;付款金额（MXN）&#x27;,&#x27;到账金额（MXN）&#x27;,&#x27;手续费（MXN）&#x27;];
+    const values=rows.map(row=&gt;{const item=isCollect?row.collect:row.pay;return isCollect?[row.date,item.orders,item.success,rateText(item.success,item.orders),item.tx,item.amount.toFixed(2),item.received.toFixed(2),item.fee.toFixed(2)]:[row.date,item.orders,item.success,item.processing,item.failed,rateText(item.success,item.orders),item.amount.toFixed(2),item.received.toFixed(2),item.fee.toFixed(2)];});
+    const escape=value=&gt;`&quot;${String(value).replaceAll(&#x27;&quot;&#x27;,&#x27;&quot;&quot;&#x27;)}&quot;`;
+    const csv=&#x27;\ufeff&#x27;+[headers,...values].map(row=&gt;row.map(escape).join(&#x27;,&#x27;)).join(&#x27;\r\n&#x27;);
+    const filename=`SPI-${isCollect?&#x27;收款&#x27;:&#x27;付款&#x27;}每日汇总-${periodLabel().replaceAll(&#x27; &#x27;,&#x27;&#x27;)}.csv`;
+    globalThis.parent?.postMessage({type:&#x27;spi-export-csv&#x27;,csv,filename},&#x27;*&#x27;);
+    const url=URL.createObjectURL(new Blob([csv],{type:&#x27;text/csv;charset=utf-8&#x27;})),link=document.createElement(&#x27;a&#x27;);
+    link.href=url;link.download=filename;document.body.appendChild(link);link.click();link.remove();setTimeout(()=&gt;URL.revokeObjectURL(url),1000);
   }
   function renderControls(){root.querySelectorAll(&#x27;#sd-range button&#x27;).forEach(button=&gt;button.setAttribute(&#x27;aria-pressed&#x27;,String(button.dataset.range===state.range)));root.querySelector(&#x27;#sd-date-fields&#x27;).hidden=state.range!==&#x27;custom&#x27;;root.querySelector(&#x27;#sd-start&#x27;).value=state.start;root.querySelector(&#x27;#sd-end&#x27;).value=state.end;root.querySelectorAll(&#x27;#sd-tabs button&#x27;).forEach(button=&gt;{const selected=button.dataset.type===state.type;button.setAttribute(&#x27;aria-pressed&#x27;,String(selected));button.setAttribute(&#x27;aria-selected&#x27;,String(selected));});}
   function render(){renderControls();renderOverview();renderTable();}
@@ -1508,6 +1519,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   root.querySelectorAll(&#x27;#sd-tabs button&#x27;).forEach(button=&gt;button.addEventListener(&#x27;click&#x27;,()=&gt;{state.type=button.dataset.type;state.page=1;render();persist();}));
   root.querySelectorAll(&#x27;#sd-date-fields input&#x27;).forEach(input=&gt;input.addEventListener(&#x27;change&#x27;,()=&gt;{state.start=root.querySelector(&#x27;#sd-start&#x27;).value;state.end=root.querySelector(&#x27;#sd-end&#x27;).value;if(state.start&gt;state.end)[state.start,state.end]=[state.end,state.start];state.page=1;render();persist();}));
   root.querySelector(&#x27;#sd-prev&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{state.page-=1;renderTable();persist();});root.querySelector(&#x27;#sd-next&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{state.page+=1;renderTable();persist();});
+  root.querySelector(&#x27;#sd-export&#x27;).addEventListener(&#x27;click&#x27;,exportRows);
   root.querySelector(&#x27;#sd-refresh&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{const mark=root.querySelector(&#x27;#sd-refresh-mark&#x27;);mark.classList.remove(&#x27;is-spinning&#x27;);void mark.offsetWidth;mark.classList.add(&#x27;is-spinning&#x27;);const now=new Date();root.querySelector(&#x27;#sd-sync&#x27;).textContent=`统计截至：${String(now.getMonth()+1).padStart(2,&#x27;0&#x27;)}-${String(now.getDate()).padStart(2,&#x27;0&#x27;)} ${String(now.getHours()).padStart(2,&#x27;0&#x27;)}:${String(now.getMinutes()).padStart(2,&#x27;0&#x27;)}（UTC-6）`;});
   globalThis.addEventListener?.(&#x27;openai:set_globals&#x27;,event=&gt;{const next=event.detail?.globals?.widgetState?.privateContent;if(next&amp;&amp;typeof next===&#x27;object&#x27;){Object.assign(state,defaults,next);render();}});
   render();
@@ -1911,6 +1923,15 @@ html&gt;body{padding:0}&lt;/style&gt;
   if (!(frame instanceof HTMLIFrameElement)) {
     return;
   }
+  globalThis.addEventListener("message", (event) => {
+    if (event.source !== frame.contentWindow || event.data?.type !== "spi-export-csv") return;
+    const { csv, filename } = event.data;
+    if (typeof csv !== "string" || csv.length > 2_000_000 || typeof filename !== "string" || !filename.endsWith(".csv")) return;
+    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+    const link = document.createElement("a");
+    link.href = url; link.download = filename.replace(/[\\/:*?"<>|]/g, "-"); document.body.appendChild(link); link.click(); link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  });
   let viewportHeight = globalThis.innerHeight;
   const storageKey = `codex:visualization-widget-state-v2:${JSON.stringify([
     globalThis.location.pathname,

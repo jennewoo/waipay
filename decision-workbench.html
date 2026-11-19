@@ -1,0 +1,1086 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>学米 · 经营决策台</title>
+<style>
+:root{color-scheme:light;--ink:#16263c;--sub:#66768a;--line:#e2e9f1;--blue:#2858cb;--bg:#f4f7fb;--green:#117453;--amber:#945105}*{box-sizing:border-box}body{margin:0;background:var(--bg);font:14px/1.55 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink)}button,input,select{font:inherit}button,select{cursor:pointer}button:focus-visible,select:focus-visible{outline:2px solid #3969e4;outline-offset:3px}[hidden]{display:none!important}header{background:#fff;border-bottom:1px solid var(--line)}.top{max-width:1310px;margin:auto;padding:14px 26px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.brand{display:flex;align-items:center;gap:10px;font-weight:800}.logo{display:grid;place-items:center;width:34px;height:34px;background:#1d3b72;color:white;border-radius:10px}.preview{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.muted,small{color:var(--sub)}button,select{border:1px solid #d7e1ee;background:white;color:var(--ink);border-radius:7px;padding:7px 11px}button:hover{border-color:#6f90d0}button[aria-pressed=true]{background:#eaf0ff;color:#244eb9;border-color:#c7d6f7}.primary{background:#2858cb;color:white;border-color:#2858cb}.subtle{background:transparent}.preview button,.preview select{font-size:12px}.preview label{font-size:12px;color:var(--sub)}main{max-width:1310px;margin:auto;padding:24px 26px 48px}nav{display:flex;gap:8px;margin-bottom:18px}.hero{display:flex;justify-content:space-between;align-items:end;gap:14px;flex-wrap:wrap;background:#142c51;color:white;border-radius:14px;padding:23px 25px}.hero p,.hero small{color:#c0d2f4;margin:4px 0 0}.hero h1{margin:3px 0;font-size:28px}.eyebrow{color:#b0c8fa;font-size:12px;letter-spacing:.08em}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0}.panel,.metric{background:white;border:1px solid var(--line);border-radius:11px}.metric{padding:15px 17px}.metric b{display:block;font-size:25px;margin:4px 0}.section-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;padding:15px 17px}.section-head h2{font-size:17px;margin:0}.section-head p{margin:4px 0 0}.filters{display:flex;gap:6px;flex-wrap:wrap}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;text-align:left}th,td{padding:12px 14px;border-top:1px solid var(--line);vertical-align:middle}th{background:#f8fafc;color:#53647a;font-size:12px;white-space:nowrap}td strong{display:block}.nowrap{white-space:nowrap}.badge{display:inline-block;font-size:12px;padding:3px 8px;border-radius:5px;background:#eaf0ff;color:#244eb9;white-space:nowrap}.badge.warn{background:#fff0dc;color:var(--amber)}.badge.ok{background:#e7f5ee;color:var(--green)}.foot{padding:11px 16px;color:var(--sub);font-size:12px}.empty{padding:28px;text-align:center;color:var(--sub)}dialog{border:0;border-radius:13px;padding:0;color:var(--ink);box-shadow:0 14px 48px #142c5155;max-width:calc(100% - 24px);width:780px;max-height:90dvh}dialog::backdrop{background:#14243d73}.dialog-head{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;align-items:start;position:sticky;top:0;background:white}.dialog-head h2{margin:3px 0}.dialog-body{padding:17px 20px 22px}.dialog-body h3{margin:18px 0 8px}.box{background:#f5f8fe;border:1px solid var(--line);padding:13px;border-radius:8px;margin:10px 0}.box p{margin:6px 0}.pills{display:flex;gap:7px;flex-wrap:wrap}.pills button{font-size:12px}.result{border-left:3px solid #4e71cd;padding-left:12px;margin-top:13px}.bars{display:grid;gap:6px}.bar-row{display:grid;grid-template-columns:105px 1fr 75px;align-items:center;gap:8px;font-size:12px}.track{height:8px;background:#e4ecf7;border-radius:6px;overflow:hidden}.track i{display:block;height:100%;background:#597ed8}.track.negative i{background:#cd795a}.controls{display:flex;flex-wrap:wrap;gap:8px}.note{font-size:12px;color:var(--sub)}@media(max-width:650px){.top,main{padding-left:12px;padding-right:12px}.hero{padding:16px}.cards{gap:6px}.metric{padding:9px}.metric b{font-size:19px}th,td{padding:9px}.table-wrap table{min-width:530px}.dialogs{padding:12px}}
+.admin-shell{display:grid;grid-template-columns:208px minmax(0,1fr);min-height:calc(100dvh - 65px)}.admin-shell main{width:100%}.admin-sidebar{background:#fff;border-right:1px solid var(--line);padding:24px 14px}.admin-nav-label{margin:0 10px 12px;font-size:12px;color:var(--sub)}.admin-sidebar nav{display:grid;gap:6px}.admin-sidebar a{display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:7px;color:var(--ink);text-decoration:none}.admin-sidebar a:hover{background:#f4f7fb}.admin-sidebar a[aria-current=page]{background:#eaf0ff;color:#244eb9;font-weight:650}.admin-sidebar svg{width:17px;height:17px;flex:none}.admin-sidebar a:focus-visible{outline:2px solid #3969e4;outline-offset:2px}@media(max-width:650px){.admin-shell{grid-template-columns:1fr}.admin-sidebar{border-right:0;border-bottom:1px solid var(--line);padding:8px 12px}.admin-nav-label{display:none}.admin-sidebar nav{display:flex;margin:0}.admin-sidebar a{padding:7px 10px}}
+:root{--bg:#f5f7fa;--ink:#1c2739;--line:#e5eaf1;--blue:#2356cd}
+.top{max-width:none;min-height:54px;padding:8px 20px}.logo{width:28px;height:28px;border-radius:6px}.admin-shell{grid-template-columns:188px minmax(0,1fr);min-height:calc(100dvh - 54px)}.admin-sidebar{padding:18px 12px}.admin-sidebar a{padding:9px 10px}.admin-shell main{max-width:1560px;margin:0 auto;padding:18px 22px 30px}.page-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}.page-head h1{font-size:21px;margin:0;font-weight:650}.page-head time{font-size:12px;color:var(--sub)}.cards{grid-template-columns:repeat(4,minmax(0,1fr));margin:0 0 12px;gap:10px}.metric,.panel{border-radius:7px}.metric{padding:11px 13px}.metric b{font-size:23px;margin:2px 0}.dashboard-cols{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(310px,1fr);gap:12px;align-items:start}.dashboard-stack{display:grid;gap:12px;min-width:0}.section-head{padding:11px 13px}.section-head h2{font-size:15px}th,td{padding:8px 10px}td{font-size:13px}td button,.filters button{font-size:12px;padding:4px 8px}.ai-body{padding:0 13px 13px}.ai-body h3{font-size:13px;margin:12px 0 6px}.ai-insight{background:#f0f5ff;padding:9px 10px;border-radius:6px;font-size:13px}.ai-insight p{margin:4px 0}.ai-form{display:grid;gap:7px}.ai-form textarea{min-height:66px;resize:vertical;font:inherit;border:1px solid #ccd7e6;border-radius:6px;padding:8px;width:100%;color:var(--ink)}.ai-form button{justify-self:end}.ai-prompts{display:grid;gap:6px}.ai-prompts button{text-align:left;font-size:12px;color:#345480;background:#f8fafc;padding:6px 8px}.ai-reply:empty{display:none}.ai-reply{margin-top:8px;font-size:13px}.ai-reply p{margin:5px 0;overflow-wrap:anywhere}.positive{color:#117453}.negative-text{color:#aa412e}.dialog-head{z-index:1}
+@media(max-width:1100px){.dashboard-cols{grid-template-columns:1fr}}@media(max-width:650px){.admin-shell{grid-template-columns:1fr}.admin-shell main{padding:12px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.metric b{font-size:19px}}
+.chart-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:12px}.chart-body{padding:0 13px 13px}.chart-body svg{display:block;width:100%;height:auto}.chart-label{fill:var(--sub);font-size:10px}.chart-legend{display:flex;gap:12px;flex-wrap:wrap;color:var(--sub);font-size:11px}.chart-legend span::before{display:inline-block;content:"";width:12px;height:3px;vertical-align:middle;margin-right:5px;background:var(--legend,#245bc9)}.channel-chart-row{display:grid;grid-template-columns:74px minmax(0,1fr) 54px;align-items:center;gap:6px;margin:9px 0;font-size:11px}.channel-chart-row b{text-align:right}.channel-chart-row .track{height:10px}.share-chart{height:96px;width:96px;border-radius:50%;display:grid;place-items:center;margin:2px auto 8px}.share-chart b{display:grid;place-items:center;width:66px;height:66px;background:white;border-radius:50%;font-size:12px}.goal-row{display:grid;grid-template-columns:minmax(110px,1fr) 1fr 42px;align-items:center;gap:10px;padding:8px 13px;border-top:1px solid var(--line)}.goal-row small{display:block}.goal-row strong:last-child{text-align:right;font-size:12px}.goal-row .track{height:7px}.goal-row .track i{background:#237a62}.ai-body>.system-title{margin-top:0}.ai-insight{margin-bottom:12px;border-left:3px solid #557bd6}.ai-insight p{margin:0}.ai-form{margin-top:12px}@media(max-width:530px){.chart-grid{grid-template-columns:1fr}}
+:root{--ink:#18243a;--sub:#4b5d77;--line:#dce5f1;--bg:#f2f6fd;--blue:#165dff;--green:#00875a;--amber:#a65300}
+.logo,.primary{background:var(--blue);border-color:var(--blue)}.primary:hover{background:#0e4bd6;border-color:#0e4bd6}
+.admin-sidebar a[aria-current=page],button[aria-pressed=true]{background:#e4eeff;color:#064aca;border-color:#bed4ff}
+th,.ai-prompts button{background:#edf4ff;color:#304d76}.metric{border-top:2px solid #c2d7ff}.badge{background:#e1edff;color:#0847b4}.badge.warn{background:#fff0d5;color:var(--amber)}.badge.ok{background:#dff6e9;color:#006a44}
+.ai-insight{background:#e9f1ff;border-left-color:var(--blue)}.positive{color:var(--green)}.negative-text{color:#c9263e}.track{background:#e4edfb}.track.negative i{background:#d9364e}.goal-row .track i{background:#00875a}
+.layout-board{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start}.layout-board>.wide{grid-column:1/-1}.layout-board>*{min-width:0}.layout-board .cards{margin:0}.ai-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}.ai-form{margin-top:0}.ai-insight{margin-bottom:0}.page-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px}.layout-list{display:grid;gap:7px;margin:12px 0}.layout-item{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:7px;padding:7px 9px}.layout-item label{flex:1}.layout-handle{cursor:grab;color:var(--blue);user-select:none}.layout-item.drop-target{border-color:var(--blue);background:#e9f1ff}.layout-item button{font-size:12px;padding:3px 7px}.layout-item button:disabled{opacity:.35;cursor:default}.layout-footer{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}.channel-chart-row{grid-template-columns:minmax(95px,auto) minmax(0,1fr) 58px}@media(max-width:850px){.layout-board,.ai-body{grid-template-columns:minmax(0,1fr)}}
+.layout-board,.layout-list{grid-template-columns:minmax(0,1.8fr) minmax(0,1fr);align-items:stretch}.layout-board>.wide,.layout-list>.wide{grid-column:1/-1}.chart-deck{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;align-content:start}.ai-body{display:block}.ai-form{margin-top:12px}.ai-insight{margin-bottom:12px}.layout-list{gap:10px;background:var(--bg);padding:10px;border:1px solid var(--line);border-radius:8px}.layout-item{display:block;background:#fff;padding:9px;min-width:0}.layout-item-top{display:flex;align-items:center;gap:7px}.layout-item-top label{overflow-wrap:anywhere}.layout-item.is-off{opacity:.58}.layout-thumb{height:32px;margin:7px 0;background:repeating-linear-gradient(to bottom,#edf4ff 0 5px,transparent 5px 9px);border-radius:4px}.layout-thumb.metrics{background:repeating-linear-gradient(to right,#edf4ff 0 22%,transparent 22% 25%)}.layout-thumb.chartDeck{background:linear-gradient(165deg,transparent 46%,#83a7f4 47% 50%,transparent 51%),#edf4ff}.layout-item-tools{display:flex;gap:6px}.layout-item.drop-before{box-shadow:-3px 0 0 var(--blue)}.layout-item.drop-after{box-shadow:3px 0 0 var(--blue)}#layoutDialog{width:900px}#trendPanel .chart-body svg{height:136px}.chart-label{font-size:10px}@media(max-width:850px){.layout-board,.layout-list{grid-template-columns:minmax(0,1fr)}}
+.layout-board>.chart-deck{grid-template-rows:auto minmax(min-content,1fr);align-content:stretch}.chart-deck #channelChart{display:flex;flex-direction:column}.comparison-body{display:flex;flex:1;flex-direction:column;justify-content:center}.trend-body{padding-top:6px}.trend-plot{height:126px;position:relative;margin:0 16px 0 39px}.trend-plot svg{position:absolute;inset:0;width:100%;height:100%}.plot-tick{position:absolute;left:-8px;transform:translate(-100%,50%);color:var(--sub);font-size:11px;line-height:1;white-space:nowrap}.plot-dot{position:absolute;width:7px;height:7px;border:1px solid #fff;border-radius:50%;transform:translate(-50%,50%)}.plot-dates{display:flex;justify-content:space-between;margin:4px 16px 9px 39px;font-size:11px;color:var(--sub)}.plot-dates span{width:0;display:flex;justify-content:center;white-space:nowrap}.trend-body .chart-legend{justify-content:flex-end}.store-compare{font-variant-numeric:tabular-nums;min-width:0}.store-compare th,.store-compare td{padding:8px 7px}.store-compare th:first-child,.store-compare td:first-child{padding-left:9px}.store-compare th:not(:first-child),.store-compare td:not(:first-child){text-align:right;white-space:nowrap}.store-compare .store-bar{margin-top:5px;height:4px;max-width:110px}.store-compare tfoot td{background:#f7faff;font-weight:650}.ai-reply{max-height:135px;overflow:auto}
+#trendPanel .trend-plot svg{height:100%}
+.sku-tabs,.sku-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:10px 13px;border-bottom:1px solid var(--line)}.sku-tabs button{border:0}.sku-toolbar input,.sku-form input{padding:7px 9px;border:1px solid #d7e1ee;border-radius:6px;font:inherit;min-width:0}.sku-toolbar input{flex:1;min-width:155px}.sku-form{display:grid;gap:10px}.sku-form label{display:grid;gap:4px}.sku-form output{display:block;background:#edf4ff;padding:9px;border-radius:6px}.sku-note{margin:0;padding:10px 13px;color:var(--sub);font-size:12px}.sku-summary{display:block;margin-bottom:10px}
+.list-pager{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap;padding:9px 13px;border-top:1px solid var(--line)}.list-pager small{margin-right:auto}.list-pager button,.list-pager select{padding:4px 8px;font-size:12px}.list-pager button:disabled{opacity:.45;cursor:default}
+.summary-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.summary-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;padding:0 13px 13px}.summary-kpis b,.trend-pick b{display:block;font-size:18px;margin:3px 0;color:var(--ink)}.trend-picks{display:grid;grid-template-columns:repeat(auto-fit,minmax(106px,1fr));gap:6px;padding:0 13px 12px}.trend-pick{text-align:left;padding:6px 8px;min-width:0;background:#f5f8fe}.trend-pick small{display:block;font-size:11px}.trend-pick b{font-size:15px}.trend-options{display:flex;gap:5px;flex-wrap:wrap}.trend-options button{padding:4px 8px;font-size:12px}.trend-body .chart-legend{margin-top:4px}.trend-body .note{margin:6px 0 0}.trend-plot{height:152px;margin-left:54px}.plot-dates{margin-left:54px}@media(max-width:720px){.summary-row{grid-template-columns:1fr}}
+.overview-strip,.detail-entries{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px}.detail-entries{padding:0 13px 13px}.entry-tile{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:46px;text-align:left}.entry-tile span:last-child{color:var(--blue)}.overview-strip .metric{min-width:0}.overview-strip .metric b{overflow-wrap:anywhere}.detail-tabs{display:flex;gap:6px;flex-wrap:wrap;padding-bottom:12px}#dataDialog{width:1060px}#detailPanels>.panel{border-radius:7px}#detailPanels>.panel[hidden]{display:none}.layout-board>.chart-deck{grid-template-rows:auto}.detail-card .section-head{padding-bottom:9px}
+.compare-panel .section-head{align-items:start}.compare-panel .section-head button{font-size:12px;padding:5px 8px}.compare-body{padding:0 13px 14px}.compare-rows{display:grid;gap:11px}.compare-item{display:grid;gap:4px}.compare-caption{display:flex;justify-content:space-between;gap:8px;font-size:12px}.compare-caption small{white-space:nowrap}.compare-track{height:8px;display:flex;background:#edf2f9;border-radius:5px;overflow:hidden}.compare-track span{height:100%}.compare-legend{display:flex;gap:12px;flex-wrap:wrap;margin:0 0 11px;font-size:12px;color:var(--sub)}.compare-legend span{display:inline-flex;gap:5px;align-items:center}.compare-legend i,.cost-legend i{width:9px;height:9px;border-radius:2px;display:inline-block;flex:none}.split-chart{display:grid;grid-template-columns:minmax(126px,1fr) minmax(0,2.5fr);gap:16px;align-items:center;max-width:760px}.cost-ring{width:126px;height:126px;margin:auto;border-radius:50%;display:grid;place-items:center}.cost-ring>span{border-radius:50%;width:88px;height:88px;background:white;display:grid;align-content:center;justify-items:center}.cost-legend{display:grid;gap:6px}.cost-legend>div{display:grid;grid-template-columns:9px minmax(0,1fr) auto 48px;align-items:center;gap:6px;font-size:12px}.cost-legend>div>small{text-align:right}.compare-body .note{margin:8px 0 0}.chart-deck #trendPanel .section-head{gap:6px}@media(max-width:500px){.split-chart{grid-template-columns:1fr}}
+.breakdown{border-top:1px solid var(--line);padding:12px 13px}.breakdown h3{font-size:14px;margin:0 0 7px}.breakdown-controls{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:8px 0}.breakdown-controls select{max-width:100%}.breakdown-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:10px}.breakdown-group{min-width:0}.breakdown-group h4{margin:0 0 6px;font-size:12px;color:var(--sub)}.contributor{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 8px;width:100%;text-align:left;margin-bottom:5px;padding:5px 7px;font-size:12px}.contributor .compare-track{grid-column:1/-1;height:3px}.contributor strong{overflow-wrap:anywhere}.breakdown-evidence{background:#f5f8fe;border-radius:7px;padding:9px 10px;margin-top:8px}.breakdown-evidence p{margin:3px 0 7px}.plot-dates button{background:white;padding:2px 3px;border:0;font-size:11px}.plot-dates span:first-child button{margin-left:2px}.plot-dates span:last-child button{margin-right:2px}@media(max-width:520px){.breakdown-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="top"><div class="brand"><span class="logo">学</span>学米后台</div><div class="preview"><small>角色预览</small><div id="roles" class="controls" role="group" aria-label="角色预览"><button data-role="operator">运营</button><button data-role="lead" aria-pressed="true">运营负责人</button><button data-role="owner">老板</button></div><select id="platform" aria-label="预览业务线"><option value="amazon">亚马逊</option><option value="multi">多平台</option></select></div></div></header>
+<div class="admin-shell"><aside class="admin-sidebar"><div class="admin-nav-label">经营管理</div><nav aria-label="后台菜单">
+<a id="workNav" href="#workbench" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 16v-4m4 4V8m4 8v-6"/></svg>经营看板</a>
+<a id="skuNav" href="#products"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m3 7 9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4m-9 4v10"/></svg>商品列表</a>
+</nav></aside><main>
+<div class="page-head"><h1 id="title"></h1><div class="page-actions"><time>统计周期：11-11 至 11-17（对比前 7 天） · USD</time><button id="editLayout" type="button">自定义布局</button></div></div>
+<section id="work"><div class="layout-board" id="layoutBoard"><div class="wide" id="metrics"></div>
+<div class="chart-deck" id="chartDeck"><section class="panel" id="trendPanel"></section></div>
+<section class="panel wide" id="goalPanel"></section>
+<section class="panel compare-panel" id="inventoryComparison"></section>
+<section class="panel compare-panel" id="operationsComparison"></section>
+<section class="panel compare-panel" id="channelProfit"></section>
+<section class="panel wide compare-panel" id="costStructure"></section>
+<aside class="panel" id="aiPanel"><div class="section-head"><div><h2>AI 经营分析</h2><p class="note">结合当前看板的数据回答问题</p></div></div><div class="ai-body">
+<div><h3 class="system-title">系统发现</h3><div class="ai-insight" id="autoInsight"></div>
+<h3>推荐问题</h3><div class="ai-prompts" id="suggestions"></div></div><div>
+<form class="ai-form" id="askForm"><label for="question">输入你的问题</label><textarea id="question" required maxlength="300" placeholder="例如：哪个渠道拖累了销售额？"></textarea><button class="primary" type="submit">开始分析</button></form><div class="ai-reply result" id="aiReply" aria-live="polite"></div>
+</div></div></aside></div></section>
+<section id="catalog" class="panel" hidden><nav class="sku-tabs" aria-label="商品管理"><button id="showProducts" aria-pressed="true">公司商品</button><button id="showPairs" aria-pressed="false">SKU 配对</button></nav><div id="productPane"><div class="section-head"><div><h2>公司商品</h2><p class="note">按公司统一 SKU 汇总 · 最近 7 天 · USD</p></div></div><div class="sku-toolbar"><select id="catalogChannel" aria-label="筛选渠道"></select><select id="catalogIssue" aria-label="筛选经营事项"><option value="">全部商品</option><option value="yes">有经营事项</option><option value="no">无经营事项</option></select><input id="catalogSearch" type="search" placeholder="搜索公司 SKU 或商品名称" aria-label="搜索公司 SKU 或商品名称"><button id="catalogReset">重置</button></div><div class="table-wrap"><table><thead><tr><th>公司 SKU / 商品</th><th>渠道</th><th>销售额</th><th>较前 7 天</th><th>经营事项</th></tr></thead><tbody id="products"></tbody></table></div><div id="catalogPager" class="list-pager" role="group" aria-label="公司商品分页"></div></div><section id="pairPane" hidden>
+<div class="sku-tabs" aria-label="配对状态"><button data-pair-state="pending" aria-pressed="true">未配对</button><button data-pair-state="paired" aria-pressed="false">已配对</button></div>
+<div class="sku-toolbar"><select id="pairChannel" aria-label="平台"></select><select id="pairStore" aria-label="店铺"></select><input id="pairSearch" type="search" placeholder="搜索平台 SKU 或公司 SKU" aria-label="搜索 SKU"><button id="pairReset">重置</button><button id="ruleOpen">配对规则</button><button id="pairPreview" class="primary">批量预匹配</button></div>
+<div class="table-wrap"><table><thead><tr><th>平台 SKU（MSKU）</th><th>平台</th><th>店铺</th><th>公司 SKU</th><th>操作人 / 时间</th><th>操作</th></tr></thead><tbody id="pairRows"></tbody></table></div><div id="pairPager" class="list-pager" role="group" aria-label="SKU 配对分页"></div></section></section>
+</main></div>
+<dialog id="dataDialog" aria-labelledby="dataTitle"><div class="dialog-head"><h2 id="dataTitle">经营明细</h2><form method="dialog"><button>关闭</button></form></div><div class="dialog-body"><div id="dataTabs" class="detail-tabs" role="group" aria-label="明细分类"></div><div id="detailPanels">
+<section class="panel" id="channelChart" hidden></section>
+<div class="panel" id="roleData" hidden></div>
+<div class="panel" id="actionPanel" hidden></div>
+<div class="panel" id="extraData" hidden></div>
+<section class="panel" id="performanceData" hidden></section>
+<section class="panel" id="adsData" hidden></section>
+<section class="panel" id="inventoryData" hidden></section>
+</div></div></dialog>
+<dialog id="detail" aria-labelledby="detailTitle"><div class="dialog-head"><div><small id="detailMeta"></small><h2 id="detailTitle"></h2></div><form method="dialog"><button aria-label="关闭详情">关闭</button></form></div><div class="dialog-body" id="detailBody"></div></dialog>
+<dialog id="pairDialog" aria-labelledby="pairTitle"><div class="dialog-head"><h2 id="pairTitle">确认 SKU 配对</h2><form method="dialog"><button>关闭</button></form></div><div class="dialog-body"><p id="pairSource"></p><form id="pairForm" class="sku-form"><label>公司 SKU<select id="pairTarget" required></select></label><div class="layout-footer"><button class="primary">确认配对</button></div></form></div></dialog>
+<dialog id="ruleDialog" aria-labelledby="ruleTitle"><div class="dialog-head"><h2 id="ruleTitle">配对规则</h2><form method="dialog"><button>关闭</button></form></div><div class="dialog-body"><form id="ruleForm" class="sku-form"><p class="note">先检查原编码是否完全一致，再尝试按平台规则解析。解析结果仅用于推荐。</p><label>平台<select id="ruleChannel"></select></label><label>移除固定前缀<input id="rulePrefix" maxlength="24" placeholder="例如 AMZ-"></label><label>移除固定后缀<input id="ruleSuffix" maxlength="24" placeholder="例如 -US"></label><label>测试平台 SKU<input id="ruleInput" maxlength="100"></label><output id="ruleResult" hidden></output><div class="layout-footer"><button id="ruleTest" type="button">解析测试</button><button class="primary">保存规则</button></div></form></div></dialog>
+<dialog id="batchDialog" aria-labelledby="batchTitle"><div class="dialog-head"><h2 id="batchTitle">批量预匹配</h2><form method="dialog"><button>关闭</button></form></div><div class="dialog-body"><p class="note">请核对规格与包装数量，勾选确认无误的候选项。</p><form id="batchForm"><div id="batchRows" class="table-wrap"></div><div class="layout-footer"><button id="batchSave" class="primary">确认勾选项</button></div></form></div></dialog>
+<dialog id="layoutDialog" aria-labelledby="layoutTitle"><div class="dialog-head"><h2 id="layoutTitle">自定义布局</h2><form method="dialog"><button>关闭</button></form></div><div class="dialog-body"><p class="note">按看板排布预览。拖动卡片手柄，蓝色标记指示放置位置。</p><div class="layout-list" id="layoutList"></div><p class="note" id="layoutStatus" role="status"></p><div class="layout-footer"><button id="restoreLayout">恢复默认</button><button id="cancelLayout">取消</button><button id="saveLayout" class="primary">保存布局</button></div></div></dialog>
+<script>
+'use strict';
+const byId = id => document.getElementById(id);
+const profiles = {
+  lead:{title:'团队经营工作台',intro:'跟进异常、协调处理人和下一步，优先解决跨渠道问题。',scope:['Amazon','Walmart','TikTok Shop'],user:'林晨',peer:'许明'},
+  amazon:{title:'运营工作台',intro:'查看需要处理的 SKU、影响和待核实事项。',scope:['Amazon'],user:'运营A',peer:'运营B'},
+  multi:{title:'运营工作台',intro:'查看需要处理的 SKU、影响和待核实事项。',scope:['Walmart','TikTok Shop'],user:'运营D',peer:'运营E'},
+  lead_amazon:{title:'团队经营工作台',intro:'跟进异常并协调处理人和下一步。',scope:['Amazon'],user:'陈晨',peer:'刘宁'},
+  lead_multi:{title:'团队经营工作台',intro:'跟进异常并协调处理人和下一步。',scope:['Walmart','TikTok Shop'],user:'沈青',peer:'王凯'},
+  owner:{title:'公司经营工作台',intro:'查看影响经营结果的重点事项和待协调决策。',scope:['Amazon','Walmart','TikTok Shop'],user:'周宁',peer:'李青'}
+};
+const cases = [
+  {id:'stock-cup',type:'stock',sku:'CUP-001',name:'便携式咖啡杯',title:'补货前供货不足',owner:'林晨',due:'11-19 12:00',eta:5,stock:150,channels:[{name:'Amazon',rate:30,now:11900,before:11200},{name:'Walmart',rate:15,now:6900,before:6300}]},
+  {id:'sales-lamp',type:'sales',sku:'LGT-004',name:'无线阅读灯',title:'销售额下滑',owner:'运营D',due:'11-19 18:00',channels:[{name:'Amazon',now:8300,before:8500},{name:'Walmart',now:4300,before:6800},{name:'TikTok Shop',now:3900,before:3200}]}
+];
+const catalog = [...cases,
+  {sku:'BAG-007',name:'通勤收纳包',channels:[{name:'Amazon',now:6450,before:5400},{name:'Walmart',now:5100,before:4600}]},
+  {sku:'BOX-015',name:'桌面收纳盒',channels:[{name:'Amazon',now:3900,before:3700},{name:'TikTok Shop',now:6200,before:5100}]},
+  {sku:'BTL-003',name:'运动水壶',channels:[{name:'Amazon',now:4800,before:4900},{name:'Walmart',now:2800,before:3000},{name:'TikTok Shop',now:2100,before:1700}]},
+  ...[
+    ['ORG-021','抽屉分隔板套装',[980,830],[460,510],null],
+    ['MAT-011','硅胶沥水垫',[1250,1320],null,[660,590]],
+    ['HOK-005','免打孔挂钩六件装',null,[780,620],[520,480]],
+    ['TRY-016','桌面置物托盘',[880,740],[360,400],null],
+    ['LGT-023','充电小夜灯',[1580,1450],null,[930,720]],
+    ['CUP-012','保温随行杯',[1640,1880],[710,640],[590,500]],
+    ['BAG-028','旅行洗漱包',null,[960,1050],[810,680]],
+    ['BOX-032','折叠储物箱',[720,690],[810,790],null],
+    ['CLP-006','理线夹十件装',[480,400],null,[410,450]],
+    ['HLD-018','铝合金手机支架',[1330,1150],[570,590],[750,620]],
+    ['BTL-024','儿童吸管水杯',null,[1240,1100],[1040,920]],
+    ['CUP-026','陶瓷马克杯',[1040,980],[490,500],null]
+  ].map(([sku,name,...periods])=>({
+    sku,name,channels:periods.flatMap((amounts,index)=>amounts?[{name:['Amazon','Walmart','TikTok Shop'][index],now:amounts[0],before:amounts[1]}]:[])
+  }))
+];
+const channelFacts = {
+  Amazon:{orders:843,refund:680,fees:5320,fulfillment:3620,cost:14300,ads:3060,owner:'运营A'},
+  Walmart:{orders:529,refund:510,fees:2170,fulfillment:1850,cost:8610,ads:1350,owner:'运营D'},
+  'TikTok Shop':{orders:381,refund:720,fees:1580,fulfillment:1640,cost:6100,ads:2080,owner:'运营E'}
+};
+const money = value => '$'+Math.abs(value).toLocaleString('en-US');
+const signed = value => (value<0?'−':value>0?'+':'')+money(value);
+const sum = (list,key) => list.reduce((total,row)=>total+row[key],0);
+const freshState = () => ({role:'lead_amazon',peer:false,version:1,forecastStock:150,filter:'all',page:'work',active:null,tasks:new Set(),cache:new Map(),pending:new Map(),budget:6,activeBudget:2,activeCalls:0,calls:0,hits:0,joined:0,queries:0});
+let state=freshState();
+const profile = () => profiles[state.role];
+const viewer = () => state.peer?profile().peer:profile().user;
+const visibleChannels = issue => issue.channels.filter(row=>profile().scope.includes(row.name));
+const canSeePool = issue => visibleChannels(issue).length===issue.channels.length;
+const delta = rows => sum(rows,'now')-sum(rows,'before');
+const gap = (issue,days=issue.eta) => Math.max(0,sum(issue.channels,'rate')*days-state.forecastStock);
+const label = issue => issue.type==='stock'?'库存冲突':'业绩异动';
+const scopedCatalog = () => catalog.filter(product=>visibleChannels(product).length);
+function channelRows(){
+  const totals=profile().scope.map(name=>{
+    const facts=channelFacts[name], rows=catalog.flatMap(product=>product.channels.filter(row=>row.name===name));
+    const now=sum(rows,'now'),before=sum(rows,'before');
+    const contribution=now-facts.refund-facts.fees-facts.fulfillment-facts.cost-facts.ads;
+    return {name,now,before,contribution,...facts};
+  });
+  if(!['amazon','multi'].includes(state.role))return totals;
+  const stores=storeRows(totals).filter(canSeeStore);
+  return totals.filter(row=>stores.some(store=>store.channel===row.name)).map(row=>{
+    const own=stores.filter(store=>store.channel===row.name);
+    return {...row,now:sum(own,'now'),before:sum(own,'before'),orders:sum(own,'orders'),refund:sum(own,'refund'),ads:sum(own,'ads')};
+  });
+}
+const rateText = (current,prior) => prior ? ((current-prior)/prior*100).toFixed(1)+'%' : '—';
+const chartColors=['#165dff','#00875a','#db7100'];
+const dailyWeights={
+  Amazon:[[12,13,16,14,18,15,12],[10,12,14,12,16,17,19]],
+  Walmart:[[15,12,13,16,14,12,18],[13,15,16,12,13,15,16]],
+  'TikTok Shop':[[10,14,12,16,14,15,19],[14,11,13,15,14,17,16]]
+};
+function distribute(total,weights){
+  const shares=weights.map(weight=>total*weight/100),counts=shares.map(Math.floor);
+  const remainder=total-counts.reduce((acc,count)=>acc+count,0);
+  shares.map((share,index)=>({index,fraction:share-counts[index]})).sort((first,second)=>second.fraction-first.fraction)
+    .slice(0,remainder).forEach(({index})=>counts[index]++);
+  return counts;
+}
+const storeDirectory={
+  Amazon:[['Amazon 美国旗舰店','运营A',64,61],['Amazon 加拿大店','运营A',36,39]],
+  Walmart:[['Walmart 美国店','运营D',100,100]],
+  'TikTok Shop':[['TikTok Shop 美国店','运营E',63,60],['TikTok Shop 英国店','运营E',37,40]]
+};
+for(const [channel,names] of Object.entries({
+  Amazon:['美国家居店','美国生活馆','美国户外店','加拿大生活馆','英国旗舰店','英国家居店','德国旗舰店','法国旗舰店','意大利店','西班牙店','日本旗舰店','澳洲旗舰店'],
+  Walmart:['美国生活馆','美国家居店','美国户外店','美国收纳店','加拿大旗舰店','加拿大生活馆'],
+  'TikTok Shop':['美国家居店','美国生活馆','美国户外店','英国生活馆','英国收纳店','英国户外店']
+})){
+  storeDirectory[channel].push(...names.map((name,index)=>[channel+' '+name,
+    channel==='Amazon'&&index<3?'运营A':channel==='Walmart'&&index<4?'运营D':index<2?'运营E':'运营'+(index+6),4+index%4,4+(index+1)%4]));
+}
+function storeWeights(stores,column){
+  const total=stores.reduce((acc,store)=>acc+store[column],0);
+  return stores.map(store=>store[column]*100/total);
+}
+function storeRows(channels){
+  if(!channels.length)return [];
+  return channels.flatMap(channel=>{
+    const stores=storeDirectory[channel.name], weights=storeWeights(stores,2);
+    const refunds=distribute(channel.refund,weights), orders=distribute(channel.orders,weights), ads=distribute(channel.ads,weights);
+    return stores.map(([name,owner],index)=>{
+      const products=storeProducts.filter(row=>row.store===name);
+      return {name,owner,channel:channel.name,now:sum(products,'now'),before:sum(products,'before'),refund:refunds[index],orders:orders[index],ads:ads[index]};
+    });
+  });
+}
+function canSeeStore(store){
+  return profile().scope.includes(store.channel)&&(!['amazon','multi'].includes(state.role)||store.owner===profile().user);
+}
+function productStoreRows(){
+  return catalog.flatMap(product=>product.channels.flatMap(channel=>{
+    const stores=storeDirectory[channel.name];
+    const current=distribute(channel.now,storeWeights(stores,2)), prior=distribute(channel.before,storeWeights(stores,3));
+    return stores.map(([store,owner],index)=>({product,store,owner,channel:channel.name,now:current[index],before:prior[index]}));
+  }));
+}
+const storeProducts=productStoreRows();
+const operatingFacts=new Map(storeProducts.map((row,index)=>{
+  const price=18+(catalog.indexOf(row.product)%9)*4;
+  const units=Math.ceil(row.now/price),priorUnits=Math.ceil(row.before/price);
+  const onHand=units+index%23,reserved=Math.floor(onHand/7);
+  return [row,{units,priorUnits,onHand,reserved,available:onHand-reserved,inbound:index%4===0?units*2:0}];
+}));
+const trendSelection=new Map();
+const metricSpecs={
+  units:['销量','count','件'],sales:['销售额','money'],orders:['订单量','count','笔'],
+  cost:['广告花费','money'],attributed:['广告归因销售额','money'],
+  acos:['ACOS','percent',null,'attributed'],tacos:['TACOS','percent',null,'sales'],refund:['退款额','money']
+};
+const periodFacts=new Map();
+for(const channel of Object.keys(channelFacts)){
+  for(const store of storeRows([{name:channel,...channelFacts[channel]}])){
+    const rows=storeProducts.filter(row=>row.store===store.name);
+    const weights=key=>{
+      const total=sum(rows,key);
+      return rows.map(row=>total?100*row[key]/total:100/rows.length);
+    };
+    const current={orders:store.orders,cost:store.ads,attributed:Math.round(store.now*.32),refund:store.refund};
+    const prior={orders:Math.round(store.orders*.94),cost:Math.round(store.ads*.89),attributed:Math.round(store.before*.30),refund:Math.round(store.refund*.91)};
+    const nowParts=Object.fromEntries(Object.entries(current).map(([key,value])=>[key,distribute(value,weights('now'))]));
+    const beforeParts=Object.fromEntries(Object.entries(prior).map(([key,value])=>[key,distribute(value,weights('before'))]));
+    rows.forEach((row,index)=>{
+      const units=operatingFacts.get(row);
+      const make=(parts,sales,count)=>({sales,units:count,...Object.fromEntries(Object.entries(parts).map(([key,values])=>[key,values[index]]))});
+      periodFacts.set(row,[make(nowParts,row.now,units.units),make(beforeParts,row.before,units.priorUnits)]);
+    });
+  }
+}
+function periodValue(row,metric,period,day){
+  const value=periodFacts.get(row)[period][metric];
+  return day===null?value:distribute(value,dailyWeights[row.channel][period])[day];
+}
+const percentValue=(numerator,denominator)=>denominator>0?100*numerator/denominator:null;
+const trendFormat={
+  money:value=>money(value),
+  count:value=>value.toLocaleString('en-US'),
+  percent:value=>value.toFixed(1)+'%'
+};
+const periodNote=(current,prior,type)=>{
+  if(current===null||prior===null)return '前期暂无可比数据';
+  if(type==='percent'){const diff=current-prior;return '较前期 '+(diff>0?'+':'')+diff.toFixed(1)+' 个百分点'}
+  return prior===0?'前期为 0，无法计算变化率':'较前期 '+(current>prior?'+':'')+rateText(current,prior);
+};
+function renderTrend(){
+  const scopedProducts=storeProducts.filter(canSeeStore);
+  const metrics=Object.entries(metricSpecs).map(([id,[title,type,,denominator]])=>{
+    const value=(period,day)=>metricValue(scopedProducts,id,period,day);
+    return {id,title,type,now:Array.from({length:7},(_,day)=>value(0,day)),prior:Array.from({length:7},(_,day)=>value(1,day)),value:value(0,null),priorValue:value(1,null)};
+  });
+  const raw=trendSelection.get(state.role)??{id:'sales',compare:true};
+  const active=metrics.find(metric=>metric.id===raw.id)??metrics[1];
+  const valueOf=metric=>metric.value;
+  const fmt=(value,type)=>value===null?'—':trendFormat[type](value);
+  const panel=byId('trendPanel');
+  const points=active.now,prior=raw.compare?active.prior:null;
+  const max=Math.max(1,...(points??[]).filter(value=>value!==null),...(prior??[]));
+  const magnitude=10**Math.floor(Math.log10(max/4));
+  const step=Math.ceil(max/4/magnitude)*magnitude,peak=step*4;
+  const x=index=>index*100/6;
+  const lines=[points,prior].map((series,index)=>{
+    if(!series)return '';
+    const path=series.reduce((segments,value,day)=>{
+      if(value===null)return [...segments,[]];
+      segments.at(-1).push(x(day)+','+(100-value/peak*100));return segments;
+    },[[]]);
+    return path.filter(segment=>segment.length).map(segment=>`<polyline fill="none" stroke="${index?'#899bb2':chartColors[0]}" stroke-width="2" vector-effect="non-scaling-stroke" ${index?'stroke-dasharray="4 3"':''} points="${segment.join(' ')}"/>`).join('');
+  }).join('');
+  const dots=[points,prior].map((series,index)=>(series??[]).map((value,day)=>value===null?'':`<span class="plot-dot" style="left:${x(day)}%;bottom:${value/peak*100}%;background:${index?'#899bb2':chartColors[0]}" title="${index?'前期':'本期'} 11-${day+(index?4:11)} · ${fmt(value,active.type)}"></span>`).join('')).join('');
+  const period=active.prior?'':active.now?'前期暂无可比数据。':'所选范围包含待归因店铺，暂无完整归因数据。';
+  panel.innerHTML=`<div class="section-head"><div><h2>业绩走势</h2><p class="note">按天 · 11-11 至 11-17 · 金额为 USD</p></div><div class="trend-options"><button data-trend-mode="current" aria-pressed="${!raw.compare}">仅本期</button><button data-trend-mode="compare" aria-pressed="${raw.compare}">对比前 7 天</button></div></div><div class="trend-picks">${metrics.map(metric=>`<button class="trend-pick" data-trend-metric="${metric.id}" aria-pressed="${active.id===metric.id}"><small>${metric.title}</small><b>${fmt(valueOf(metric),metric.type)}</b><small>${periodNote(valueOf(metric),metric.priorValue,metric.type)}</small></button>`).join('')}</div><div class="chart-body trend-body">${points?`<div class="trend-plot" role="img" aria-label="${active.title}：本期 ${points.map(value=>fmt(value,active.type)).join('、')}${prior?'；前期 '+prior.map(value=>fmt(value,active.type)).join('、'):''}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${[0,1,2,3,4].map(tick=>`<line x1="0" x2="100" y1="${100-tick*25}" y2="${100-tick*25}" stroke="#dce5f1" vector-effect="non-scaling-stroke"/>`).join('')}${lines}</svg>${[0,1,2,3,4].map(tick=>`<span class="plot-tick" style="bottom:${tick*25}%">${fmt(tick*step,active.type)}</span>`).join('')}${dots}</div><div class="plot-dates">${Array.from({length:7},(_,day)=>'<span>'+ (11+day)+'日</span>').join('')}</div><div class="chart-legend"><span>本期</span>${prior?'<span style="--legend:#899bb2">前期（按周期顺序对齐）</span>':''}</div>`:'<p class="empty">暂无完整趋势数据</p>'}${period?'<p class="note">'+period+'</p>':''}</div>`;
+  panel.querySelector('.section-head h2').textContent='业绩变化拆解';
+  panel.insertAdjacentHTML('beforeend','<div class="breakdown" id="changeBreakdown"></div>');
+  const dates=panel.querySelector('.plot-dates');
+  if(dates&&active.prior)dates.innerHTML=Array.from({length:7},(_,day)=>`<span><button data-change-day="${day}" aria-label="拆解 11 月 ${11+day} 日">${11+day}日</button></span>`).join('');
+  renderBreakdown(active.id);
+  panel.onchange=event=>{
+    const view=breakdownView();
+    if(event.target.matches('[data-change-period]'))view.day=event.target.value===''?null:Number(event.target.value);
+    else if(event.target.matches('[data-change-store]')){view.store=event.target.value;view.sku=''}
+    else if(event.target.matches('[data-change-sku]'))view.sku=event.target.value;
+    else return;
+    renderBreakdown(active.id,['[data-change-period]','[data-change-store]','[data-change-sku]'].find(selector=>event.target.matches(selector)));
+  };
+  panel.onclick=event=>{
+    if(handleBreakdownClick(event,active.id))return;
+    const metric=event.target.closest('[data-trend-metric]'),mode=event.target.closest('[data-trend-mode]');
+    if(!metric&&!mode)return;
+    trendSelection.set(state.role,{id:metric?.dataset.trendMetric??active.id,compare:mode?mode.dataset.trendMode==='compare':raw.compare});
+    renderTrend();
+    const selector=metric?'[data-trend-metric="'+metric.dataset.trendMetric+'"]':'[data-trend-mode="'+mode.dataset.trendMode+'"]';
+    panel.querySelector(selector)?.focus();
+  };
+  return {metrics,valueOf,fmt};
+}
+const breakdownSelections=new Map();
+function breakdownView(){
+  if(!breakdownSelections.has(state.role))breakdownSelections.set(state.role,{day:null,store:'',sku:''});
+  return breakdownSelections.get(state.role);
+}
+function metricValue(rows,metric,period,day){
+  const denominator=metricSpecs[metric][3];
+  const total=key=>rows.reduce((acc,row)=>acc+periodValue(row,key,period,day),0);
+  return denominator?percentValue(total('cost'),total(denominator)):total(metric);
+}
+function contributionRows(metric,day){
+  const rows=storeProducts.filter(canSeeStore),denominator=metricSpecs[metric][3];
+  const total=(key,period)=>rows.reduce((acc,row)=>acc+periodValue(row,key,period,day),0);
+  const currentBase=denominator?total(denominator,0):1,priorBase=denominator?total(denominator,1):1;
+  if(!currentBase||!priorBase)return [];
+  const priorRate=denominator?total('cost',1)/priorBase:0;
+  return rows.map(row=>{
+    const now=metricValue([row],metric,0,day),before=metricValue([row],metric,1,day);
+    const change=denominator?100*((periodValue(row,'cost',0,day)-periodValue(row,'cost',1,day))-priorRate*(periodValue(row,denominator,0,day)-periodValue(row,denominator,1,day)))/currentBase:now-before;
+    return {...row,now,before,change};
+  });
+}
+const changePeriod=day=>day===null?'11-11 至 11-17 对比 11-04 至 11-10':'11-'+(11+day)+' 对比 11-'+String(4+day).padStart(2,'0');
+function formatMetric(value,metric){
+  const [,type,unit]=metricSpecs[metric];
+  return value===null?'—':trendFormat[type](value)+(unit?' '+unit:'');
+}
+function changeFormat(value,metric){
+  const [,type]=metricSpecs[metric];
+  if(type==='money')return signed(value);
+  const rounded=type==='percent'?Number(value.toFixed(2)):value;
+  return (rounded>0?'+':'')+(type==='percent'?rounded.toFixed(2)+' 个百分点':formatMetric(rounded,metric));
+}
+const canBreakDown=metric=>Object.hasOwn(metricSpecs,metric);
+function contributionPreview(items,isSelected){
+  return items.slice(0,3).map((item,index)=>({item,rank:index+1,extra:false})).concat(
+    items.flatMap((item,index)=>index>=3&&isSelected(item)?[{item,rank:index+1,extra:true}]:[])
+  );
+}
+function renderBreakdown(metric,focus){
+  const target=byId('changeBreakdown'),view=breakdownView();
+  if(!canBreakDown(metric)){
+    target.innerHTML='<p class="note">当前指标仅展示趋势，缺少按店铺与 SKU 拆解所需的前后期明细。销售额和销量可查看变化贡献。</p>';return;
+  }
+  const rows=contributionRows(metric,view.day);
+  if(!rows.length){
+    target.innerHTML=`<h3>变化贡献</h3><p class="note">${changePeriod(view.day)} · 比率分母为零，无法对比。</p><button data-change-reset>返回整个 7 天</button>`;
+    return;
+  }
+  const grouped=Map.groupBy(rows,row=>row.store);
+  const stores=[...grouped].map(([name,items])=>({name,change:sum(items,'change')})).sort((first,second)=>Math.abs(second.change)-Math.abs(first.change));
+  const storeName=grouped.has(view.store)?view.store:stores[0]?.name;
+  const products=[...(grouped.get(storeName)??[])].sort((first,second)=>Math.abs(second.change)-Math.abs(first.change));
+  const selected=products.find(row=>row.product.sku===view.sku)??products[0];
+  const store=stores.find(row=>row.name===storeName);
+  const optionsFor=(items,value,label,selectedValue)=>items.map(item=>`<option value="${esc(value(item))}" ${value(item)===selectedValue?'selected':''}>${esc(label(item))}</option>`).join('');
+  const bars=(items,group)=>{
+    const getLabel=item=>group==='store'?item.name:item.product.sku;
+    const isSelected=item=>getLabel(item)===(group==='store'?storeName:selected?.product.sku);
+    return contributionPreview(items,isSelected).map(({item,rank,extra})=>{
+      const label=getLabel(item);
+      return `${extra?'<div class="note" style="margin:8px 0 4px">当前选中 · 第 '+rank+' 名</div>':''}<button class="contributor" data-contribution="${group}" data-value="${esc(label)}" aria-pressed="${isSelected(item)}"><strong>${rank}. ${esc(label)}</strong><span class="${item.change<0?'negative-text':'positive'}">${changeFormat(item.change,metric)}</span><span class="compare-track" aria-hidden="true"><span style="width:${Math.abs(item.change)/Math.max(1,Math.abs(items[0].change))*100}%;background:${item.change<0?'#c9263e':'#00875a'}"></span></span></button>`;
+    }).join('');
+  };
+  let evidence='';
+  if(selected){
+    const original=storeProducts.find(row=>row.product===selected.product&&row.store===storeName),fact=operatingFacts.get(original);
+    const coverage=fact.units? (fact.available*7/fact.units).toFixed(1)+' 天':'—';
+    const id=changeIssueId(selected,metric,view.day);
+    const exists=storeIssues.find(issue=>issue.id===id);
+    const evidenceLine=['cost','attributed','refund'].map(key=>metricSpecs[key][0]+' '+money(periodValue(original,key,1,view.day))+' → '+money(periodValue(original,key,0,view.day))).join('；');
+    evidence=`<div class="breakdown-evidence"><strong>${esc(selected.product.sku+' · '+selected.product.name)}：贡献 ${changeFormat(selected.change,metric)}</strong><p class="note">该 SKU：本期 ${formatMetric(selected.now,metric)}，前期 ${formatMetric(selected.before,metric)}。</p><p class="note">同周期 SKU 证据：${evidenceLine}。当前可售 ${fact.available} 件，预计覆盖 ${coverage}（当前快照）。这些变化是核查线索，不能单独证明原因。</p><button data-create-followup>${exists?(state.tasks.has(id)?'查看跟进':'查看待处理事项'):'由 '+esc(selected.owner)+' 跟进'}</button></div>`;
+  }
+  target.innerHTML=`<h3>变化贡献 <span class="${sum(rows,'change')<0?'negative-text':'positive'}">${changeFormat(sum(rows,'change'),metric)}</span></h3><p class="note">${changePeriod(view.day)} · 净变化等于所有店铺贡献之和${metricSpecs[metric][3]?'。按前期整体比率衡量分母变化，再把各项广告费变化与分母影响折成百分点；不是 SKU 自身比率差。':''}</p><div class="breakdown-controls"><label>周期 <select data-change-period><option value="">整个 7 天</option>${Array.from({length:7},(_,day)=>`<option value="${day}" ${view.day===day?'selected':''}>11-${11+day}</option>`).join('')}</select></label><label>店铺 <select data-change-store>${optionsFor(stores,row=>row.name,row=>row.name,storeName)}</select></label><label>SKU <select data-change-sku>${optionsFor(products,row=>row.product.sku,row=>row.product.sku+' · '+row.product.name,selected?.product.sku)}</select></label></div><div class="breakdown-grid"><div class="breakdown-group"><h4>店铺 · 绝对变动前 3</h4>${bars(stores,'store')}</div><div class="breakdown-group"><h4>所选店铺 SKU · 绝对变动前 3</h4>${bars(products,'sku')}</div></div>${store?`<p class="note">所选店铺全部 SKU 合计 ${changeFormat(store.change,metric)}；下拉框可选全部记录；选中前三之外的项目，会在排行下方单独显示。</p>`:''}${evidence}`;
+  if(focus)target.querySelector(focus)?.focus();
+}
+function changeIssueId(row,metric,day){
+  return ['change',row.channel,row.store,row.product.sku,metric,day??'week'].join('|');
+}
+function handleBreakdownClick(event,metric){
+  const day=event.target.closest('[data-change-day]'),pick=event.target.closest('[data-contribution]'),follow=event.target.closest('[data-create-followup]');
+  const reset=event.target.closest('[data-change-reset]');
+  if(!day&&!pick&&!follow&&!reset)return false;
+  const view=breakdownView();
+  if(reset)view.day=null;
+  if(day)view.day=Number(day.dataset.changeDay);
+  if(pick){
+    if(pick.dataset.contribution==='store'){view.store=pick.dataset.value;view.sku=''}
+    else {
+      view.store=byId('changeBreakdown').querySelector('[data-change-store]').value;
+      view.sku=pick.dataset.value;
+    }
+  }
+  if(follow){
+    const container=byId('changeBreakdown'),store=container.querySelector('[data-change-store]').value,sku=container.querySelector('[data-change-sku]').value;
+    const row=contributionRows(metric,view.day).find(entry=>entry.store===store&&entry.product.sku===sku);
+    if(!row)return true;
+    const id=changeIssueId(row,metric,view.day);
+    let issue=storeIssues.find(entry=>entry.id===id);
+    if(!issue){
+      issue={id,type:'sales',sku,name:row.product.name,store,owner:row.owner,due:'未设期限',title:metricSpecs[metric][0]+'变化核查',
+        change:{metric,period:changePeriod(view.day),now:row.now,before:row.before,contribution:row.change},channels:[{name:row.channel,now:row.now,before:row.before}]};
+      storeIssues.push(issue);state.tasks.add(id);render();
+    }
+    showDetail(issue);
+    return true;
+  }
+  renderBreakdown(metric,pick?(pick.dataset.contribution==='store'?'[data-change-store]':'[data-change-sku]'):null);
+  return true;
+}
+function renderOperatingData(audience,stores,channels){
+  const company=audience==='owner';
+  const rows=storeProducts.filter(canSeeStore);
+  const unitsFor=(items,key)=>sum(items.map(row=>operatingFacts.get(row)),key);
+  const trend=renderTrend(channels,stores);
+  const overviewIds=company?['sales','units']:['sales','units','cost'];
+  const overview=operatingSummary(trend,overviewIds,rows,company);
+  const percent=(numerator,denominator)=>denominator>0?(100*numerator/denominator).toFixed(1)+'%':'—';
+  const performance=company?channels:stores;
+  dashboardTable('performanceData','经营业绩','近 7 天对比前 7 天 · 销量按商品件数，订单量按订单笔数统计',
+    [company?'渠道':'店铺','本期销量','前期销量','销量变化','销售额','销售额变化','订单量','退款金额'],
+    performance.map(item=>{
+      const items=rows.filter(row=>company?row.channel===item.name:row.store===item.name);
+      const now=unitsFor(items,'units'),prior=unitsFor(items,'priorUnits');
+      return {search:item.name,cells:[item.name,now+' 件',prior+' 件',rateText(now,prior),money(item.now),rateText(item.now,item.before),item.orders,money(item.refund)]};
+    }));
+  const adRows=performance.map(item=>{
+    const items=rows.filter(row=>company?row.channel===item.name:row.store===item.name);
+    const attributed=metricValue(items,'attributed',0,null);
+    return {search:item.name,status:'已归因',cost:item.ads,attributed,revenue:item.now,
+      cells:[item.name,money(item.ads),money(attributed),percent(item.ads,attributed),percent(item.ads,item.now),'已归因']};
+  });
+  dashboardTable('adsData','广告投入与产出','近 7 天 · USD · ACOS＝广告花费 ÷ 广告归因销售额；TACOS＝广告花费 ÷ 总销售额',
+    [company?'渠道':'店铺','广告花费','广告归因销售额','ACOS','TACOS','归因状态'],
+    adRows,[['status','归因状态',['已归因','待归因']]],filtered=>{
+      if(!filtered.length)return [];
+      const cost=sum(filtered,'cost'), complete=filtered.every(row=>row.attributed!==null), revenue=sum(filtered,'revenue');
+      return ['筛选合计（含所有结果页）',money(cost),complete?money(sum(filtered,'attributed')):'—',complete?percent(cost,sum(filtered,'attributed')):'—',percent(cost,revenue),complete?'已归因':'含待归因'];
+    });
+  if(!company){
+    const inventory=rows.map(row=>{
+      const fact=operatingFacts.get(row),days=fact.units?fact.available*7/fact.units:null;
+      const status=days===null?'暂无销量':days<7?'覆盖不足 7 天':'覆盖至少 7 天';
+      return {search:row.product.sku+' '+row.product.name,store:row.store,status,days,
+        cells:[row.product.sku+' · '+row.product.name,row.store,fact.onHand,fact.reserved,fact.available,fact.inbound,days===null?'—':days.toFixed(1)+' 天',status]};
+    }).sort((first,second)=>(first.days??Infinity)-(second.days??Infinity));
+    dashboardTable('inventoryData','店铺库存','库存快照 · 可售天数按近 7 天日均销量估算，未计入在途',
+      ['公司 SKU / 商品','店铺','在库（件）','占用（件）','可售（件）','在途（件）','可售天数','覆盖状态'],
+      inventory,[['store','店铺',stores.map(row=>row.name)],['status','覆盖状态',['覆盖不足 7 天','覆盖至少 7 天','暂无销量']]]);
+  }
+  return overview;
+}
+function operatingSummary(trend,ids,rows,company){
+  const cards=ids.map(id=>{
+    const metric=trend.metrics.find(entry=>entry.id===id),value=trend.valueOf(metric);
+    return [metric.title,trend.fmt(value,metric.type)+(id==='units'?' 件':''),metric.prior?periodNote(value,metric.prior.reduce((acc,value)=>acc+value,0),metric.type):'近 7 天'];
+  });
+  if(!company){
+    const lowStock=rows.filter(row=>{const fact=operatingFacts.get(row);return fact.available<fact.units}).length;
+    cards.push(['库存覆盖不足 7 天',lowStock+' 项','按 SKU × 店铺统计']);
+  }
+  return cards;
+}
+const storeIssues=storeProducts.filter(row=>row.now<row.before||row.product.id==='stock-cup').map((row,index)=>{
+  const stock=row.product.id==='stock-cup';
+  return {id:'store-case-'+index,type:stock?'stock':'sales',sku:row.product.sku,name:row.product.name,store:row.store,owner:row.owner,
+    due:'11-'+(19+index%3)+' '+(index%2?'18:00':'12:00'),title:stock?'核实到货前供货':'销售额下滑',eta:row.product.eta,
+    channels:[{name:row.channel,now:row.now,before:row.before,rate:0}]};
+});
+const visibleIssues=()=>storeIssues.filter(issue=>canSeeStore({channel:issue.channels[0].name,owner:issue.owner}));
+function currentStores(){
+  if(!['amazon','multi'].includes(state.role))return storeRows(channelRows());
+  return storeRows(profile().scope.map(name=>{
+    const rows=catalog.flatMap(product=>product.channels.filter(row=>row.name===name));
+    return {name,now:sum(rows,'now'),before:sum(rows,'before'),...channelFacts[name]};
+  })).filter(canSeeStore);
+}
+function renderStoreComparison(channels,audience,stores){
+  const comparison=audience==='owner'?channels:[...stores].sort((first,second)=>second.now-first.now);
+  const total=sum(comparison,'now');
+  let segments=[],position=0;
+  channels.forEach((row,index)=>{const end=position+row.now/total*100;segments.push(chartColors[index]+' '+position+'% '+end+'%');position=end});
+  const maximum=Math.max(...comparison.map(row=>row.now),1);
+  if(audience!=='owner'){
+    const changeCell=row=>`<span class="${delta([row])<0?'negative-text':'positive'}">${delta([row])>0?'+':''}${rateText(row.now,row.before)}</span>`;
+    const rows=comparison.map(row=>({search:row.name,now:row.now,before:row.before,cells:[row.name,money(row.now),money(row.before),changeCell(row)]}));
+    dashboardTable('channelChart','店铺销售额对比','按本期销售额排序 · 与前 7 天比较 · USD',['店铺','本期','前期','变化'],rows,[],filtered=>{
+      const totals={now:sum(filtered,'now'),before:sum(filtered,'before')};
+      return filtered.length?['筛选合计（含所有结果页）',money(totals.now),money(totals.before),changeCell(totals)]:[];
+    });
+    return;
+  }
+  delete byId('channelChart').dataset.listKey;
+  byId('channelChart').innerHTML=`<div class="section-head"><div><h2>${audience==='owner'?'渠道销售额占比':'店铺销售额对比'}</h2><p class="note">本期 · ${audience==='owner'?'占公司销售额':'USD'}</p></div></div><div class="chart-body">${audience==='owner'?'<div class="share-chart" aria-hidden="true" style="background:conic-gradient('+segments.join(',')+')"><b>'+money(total)+'</b></div>':''}${comparison.map((row,index)=>`<div class="channel-chart-row"><span>${row.name}</span><span class="track" aria-hidden="true"><i style="width:${row.now/maximum*100}%;background:${chartColors[index%chartColors.length]}"></i></span><b>${audience==='owner'?(row.now/total*100).toFixed(1)+'%':money(row.now)}</b></div>`).join('')}</div>`;
+}
+const goals={
+  amazon:{sales:35000,selection:[3,5],listing:[8,10]},
+  multi:{sales:40000,selection:[4,6],listing:[6,9]},
+  lead:{sales:25000,ownSales:21200,selection:[5,8],listing:[12,16]},
+  lead_amazon:{sales:18000,ownSales:14900,selection:[2,4],listing:[5,8]},
+  lead_multi:{sales:18000,ownSales:15100,selection:[3,5],listing:[7,10]}
+};
+function renderGoals(audience,salesTotal){
+  const panel=byId('goalPanel'), goal=goals[state.role];
+  panel.hidden=!goal;
+  if(!goal){panel.innerHTML='';return}
+  const metrics=[['个人归属销售额',goal.ownSales??salesTotal,goal.sales,money],['选品通过评审',...goal.selection,value=>value+' 款'],['完成商品链接维护',...goal.listing,value=>value+' 条']];
+  panel.innerHTML=`<div class="section-head"><div><h2>我的指标</h2><p class="note">${audience==='lead'?'个人考核，与团队业绩分开统计':'本期个人考核'} · 已完成 / 目标</p></div></div>${metrics.map(([name,actual,target,format])=>{
+    const percent=Math.round(actual/target*100);
+    return `<div class="goal-row"><div><strong>${name}</strong><small>${format(actual)} / ${format(target)}</small></div><div class="track" role="progressbar" aria-label="${name}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.min(100,percent)}" aria-valuetext="完成 ${percent}%"><i style="width:${Math.min(100,percent)}%"></i></div><strong>${percent}%</strong></div>`;
+  }).join('')}`;
+}
+function tablePanel(title,sub,columns,rows){
+  return `<div class="section-head"><div><h2>${title}</h2><p class="note">${sub}</p></div></div><div class="table-wrap"><table><thead><tr>${columns.map(col=>'<th>'+col+'</th>').join('')}</tr></thead><tbody>${rows.map(row=>'<tr>'+row.map(cell=>'<td>'+cell+'</td>').join('')+'</tr>').join('')}</tbody></table></div>`;
+}
+const scopeKey = () => ['sales','units',...(['amazon','multi'].includes(state.role)?currentStores().map(store=>store.name):[]),...(state.role==='owner'?['profit']:[]),...(profile().scope.includes('Amazon')&&profile().scope.includes('Walmart')?['pool']:[]),...profile().scope].sort().join('|');
+const keyFor = (issue,intent) => [issue.id,intent,scopeKey(),'11-11/11-17',issue.type==='stock'?state.version:1].join('::');
+const baseKey = issue => keyFor(issue,'base');
+const impact = issue => issue.change?changeFormat(issue.change.contribution,issue.change.metric):issue.type==='sales'?'销售额 '+signed(delta(visibleChannels(issue))):canSeePool(issue)?'到货前预计缺口 '+gap(issue)+' 件':'到货前需核实供货数量';
+const recommended={
+  operator:['CUP-001 的日均销量是多少？','LGT-004 销售额变化要优先核查什么？','当前范围近 7 天销售额是多少？'],
+  lead:['哪个渠道拖累了销售额？','共享库存怎么分？','到货再晚两天怎么办？'],
+  owner:['哪个渠道的贡献利润率最低？','哪个渠道拖累了销售额？','当前范围近 7 天销售额是多少？']
+};
+const storeQuestion='哪家店铺的销售额变化最值得关注？';
+function seedAnalysis(){
+  const previous=state.role;
+  for(const role of Object.keys(profiles)){
+    state.role=role;
+    for(const issue of cases)state.cache.set(baseKey(issue),answer(issue,'base'));
+    for(const issue of visibleIssues())state.cache.set(baseKey(issue),answer(issue,'base'));
+    const intent=role==='owner'?'profit':'storeSales';
+    state.cache.set(keyFor(cases[1],intent),answer(cases[1],intent));
+  }
+  state.role=previous;
+}
+function answer(issue,intent){
+  if(issue?.change){
+    const {metric,period,now,before,contribution}=issue.change;
+    return period+'：该 SKU 本期 '+formatMetric(now,metric)+'，前期 '+formatMetric(before,metric)+'；对整体变化贡献 '+changeFormat(contribution,metric)+'。'+(intent==='facts'?'':'请核对该 SKU 对应日期的库存、广告、退款及促销记录。');
+  }
+  if(intent==='storeSales'){
+    const rows=currentStores(), weakest=[...rows].sort((first,second)=>delta([first])-delta([second]))[0];
+    return weakest.name+(delta([weakest])<0?' 销售额降幅金额最大：':' 销售额增长金额最小：')+signed(delta([weakest]))+'。建议结合商品销量、活动和退款核对变化原因。';
+  }
+  if(intent==='profit'){
+    const rows=channelRows(), ranked=[...rows].sort((first,second)=>first.contribution/first.now-second.contribution/second.now), lowest=ranked[0];
+    return lowest.name+' 的贡献利润率最低（'+(100*lowest.contribution/lowest.now).toFixed(1)+'%），广告费 '+money(lowest.ads)+'，退款额 '+money(lowest.refund)+'。先核对费用与退款构成，再决定是否调整投入。此口径未扣公司固定支出。';
+  }
+  if(intent==='channelSales'){
+    const rows=channelRows(), weakest=[...rows].sort((first,second)=>delta([first])-delta([second]))[0];
+    return '当前渠道范围内销售额合计 '+money(sum(rows,'now'))+'，较前 7 天 '+signed(delta(rows))+'。'+weakest.name+(delta([weakest])<0?' 降幅金额最大：':' 增长金额最小：')+signed(delta([weakest]))+'。这说明变化来自哪里，不能单独解释原因。';
+  }
+  const rows=visibleChannels(issue);
+  if(issue.store&&issue.type==='stock')return '请核对 '+issue.store+' 的可售库存、已承诺订单与到仓时间。当前事项未提供店铺库存快照，暂不能估算缺口。';
+  if(issue.type==='stock'){
+    if(intent==='facts')return '日均需求：'+rows.map(row=>row.name+' '+row.rate+' 件').join('；')+'。';
+    if(!canSeePool(issue))return '当前渠道近 7 天日均销售 '+sum(rows,'rate')+' 件。请联系处理人核对可分配库存和到仓时间；现有数据不足以比较渠道分配方案。';
+    if(intent==='delay')return '若到货再晚 2 天，预计缺口 '+gap(issue,issue.eta+2)+' 件（'+sum(rows,'rate')+' 件/日 × '+(issue.eta+2)+' 天 − '+state.forecastStock+' 件）。先核实加急到仓是否可行。';
+    if(intent==='allocation')return '按两渠道日均需求比例分配，'+rows.map(row=>row.name+' 约 '+Math.floor(state.forecastStock*row.rate/sum(rows,'rate'))+' 件').join('，')+'。这是按销量比例计算的备选方案；若有订单承诺或渠道库存下限，须先核实再决定。';
+    return '预计到货前缺 '+gap(issue)+' 件（'+sum(rows,'rate')+' 件/日 × '+issue.eta+' 天 − '+state.forecastStock+' 件）。先核实预计到仓时间和已承诺订单，再比较加急与分配方案。';
+  }
+  if(intent==='facts')return '最近 7 天销售额 '+money(sum(rows,'now'))+'，前 7 天 '+money(sum(rows,'before'))+'，变化 '+signed(delta(rows))+'。';
+  const driver=[...rows].sort((first,second)=>delta([first])-delta([second]))[0];
+  const summary='当前渠道范围净变动 '+signed(delta(rows))+'；'+driver.name+' 变化 '+signed(delta([driver]))+'。';
+  return summary+(intent==='drivers'?' 下一步按站点核对可售天数、广告点击与退款，并检查期间是否有活动或价格变更。':' 这是销售额变化的拆分；需要商品库存、广告和退款明细才能判断原因。');
+}
+function comparisonPanel(id,title,subtitle,target,body){
+  byId(id).innerHTML=`<div class="section-head"><div><h2>${title}</h2><p class="note">${subtitle}</p></div><button data-data-panel="${target}">查看明细</button></div><div class="compare-body">${body}</div>`;
+}
+function compareChart(rows,series,format){
+  const max=Math.max(1,...rows.map(row=>series.reduce((total,item)=>total+Math.max(0,row[item.key]),0)));
+  const legend=series.map(item=>`<span><i style="background:${item.color}"></i>${item.label}</span>`).join('');
+  return `<div class="compare-legend">${legend}</div><div class="compare-rows">${rows.map(row=>{
+    const values=series.map(item=>item.label+' '+format(row[item.key])).join(' · ');
+    return `<div class="compare-item"><div class="compare-caption"><strong>${esc(row.name)}</strong><small>${values}</small></div><div class="compare-track" aria-hidden="true">${series.map(item=>`<span style="width:${Math.max(0,row[item.key])/max*100}%;background:${item.color}"></span>`).join('')}</div></div>`;
+  }).join('')}</div>`;
+}
+function renderComparisons(audience,channels,stores,issues,costRows){
+  const blue='#165dff',green='#00875a',orange='#db7100',purple='#7954cd';
+  if(audience==='owner'){
+    comparisonPanel('channelProfit','渠道盈利对比','近 7 天 · USD · 贡献利润未扣公司固定支出','roleData',
+      `<div class="compare-legend"><span><i style="background:${blue}"></i>销售额</span><span><i style="background:${green}"></i>贡献利润</span></div><div class="compare-rows">${channels.map(row=>{
+        const top=Math.max(1,...channels.flatMap(channel=>[channel.now,Math.abs(channel.contribution)]));
+        return `<div class="compare-item"><div class="compare-caption"><strong>${esc(row.name)}</strong><small>利润率 ${row.now?(row.contribution/row.now*100).toFixed(1)+'%':'—'}</small></div>${[[row.now,blue,'销售额'],[row.contribution,row.contribution<0?'#c9263e':green,'贡献利润']].map(([value,color,label])=>`<div class="compare-caption"><div class="compare-track" style="flex:1" title="${label}"><span style="width:${Math.abs(value)/top*100}%;background:${color}"></span></div><small aria-label="${label}">${value<0?signed(value):money(value)}</small></div>`).join('')}</div>`;
+      }).join('')}</div>`);
+    const colors=[blue,green,orange,purple,'#d75072'],total=costRows.reduce((acc,[,value])=>acc+value,0);
+    let start=0;
+    const parts=costRows.map(([label,value],index)=>{
+      const share=total?value/total*100:0,end=start+share,color=colors[index];
+      const segment=`${color} ${start}% ${end}%`;start=end;
+      return {label,value,share,color,segment};
+    });
+    comparisonPanel('costStructure','经营成本构成','近 7 天 · 各项占已计入费用与退款合计的比例','extraData',
+      `<div class="split-chart"><div class="cost-ring" aria-hidden="true" style="background:${total?'conic-gradient('+parts.map(part=>part.segment).join(',')+')':'#edf2f9'}"><span><small>扣减合计</small><b>${money(total)}</b></span></div><div class="cost-legend">${parts.map(part=>`<div><i style="background:${part.color}"></i><span>${part.label}</span><b>${money(part.value)}</b><small>${part.share.toFixed(1)}%</small></div>`).join('')}</div></div>`);
+    return;
+  }
+  const products=storeProducts.filter(canSeeStore);
+  const inventory=stores.map(store=>{
+    const facts=products.filter(row=>row.store===store.name).map(row=>operatingFacts.get(row));
+    return {name:store.name,available:sum(facts,'available'),reserved:sum(facts,'reserved'),inbound:sum(facts,'inbound'),risk:facts.filter(fact=>fact.units>fact.available).length};
+  }).sort((first,second)=>second.risk-first.risk||second.available-first.available);
+  comparisonPanel('inventoryComparison','店铺库存结构','按库存覆盖不足的 SKU 数排序 · 展示前 5 家','inventoryData',
+    compareChart(inventory.slice(0,5),[{key:'available',label:'可售',color:blue},{key:'reserved',label:'占用',color:orange},{key:'inbound',label:'在途',color:purple}],value=>value+' 件')+
+    '<p class="note">可售和占用属于在库；在途另列，未计入可售。</p>');
+  if(audience==='lead'){
+    const byOwner=[...new Set(issues.map(issue=>issue.owner))].map(name=>{
+      const items=issues.filter(issue=>issue.owner===name),tracking=items.filter(issue=>state.tasks.has(issue.id)).length;
+      return {name,open:items.length-tracking,tracking};
+    }).sort((first,second)=>second.open-first.open||second.tracking-first.tracking);
+    comparisonPanel('operationsComparison','团队事项分布','按待处理数量排序 · 展示前 5 位负责人','actionPanel',
+      compareChart(byOwner.slice(0,5),[{key:'open',label:'待处理',color:orange},{key:'tracking',label:'跟进中',color:blue}],value=>value+' 项'));
+  }else{
+    const ads=[...stores].sort((first,second)=>second.ads-first.ads).slice(0,5).map(store=>({name:store.name,ads:store.ads}));
+    comparisonPanel('operationsComparison','店铺广告投入对比','近 7 天 · USD · 展示花费前 5 家','adsData',
+      compareChart(ads,[{key:'ads',label:'广告花费',color:blue}],money));
+  }
+}
+function render(){
+  const current=profile(),stock=cases[0];
+  const dashboard=state.page==='work';
+  byId('editLayout').hidden=!dashboard;
+  byId('title').textContent=dashboard?current.title:'商品列表';
+  byId('workNav').setAttribute('aria-current',dashboard?'page':'false');
+  byId('skuNav').setAttribute('aria-current',dashboard?'false':'page');
+  byId('work').hidden=state.page!=='work';byId('catalog').hidden=state.page!=='sku';
+  const audience=state.role.startsWith('lead')?'lead':state.role==='owner'?'owner':'operator';
+  byId('roles').querySelectorAll('button').forEach(button=>button.setAttribute('aria-pressed',button.dataset.role===audience));
+  byId('platform').hidden=audience==='owner';
+  if(audience!=='owner')byId('platform').value=state.role.endsWith('multi')?'multi':'amazon';
+  const channels=channelRows(),stores=currentStores(), issues=visibleIssues(), tracking=issues.filter(issue=>state.tasks.has(issue.id)).length;
+  const salesTotal=sum(channels,'now'), priorTotal=sum(channels,'before'), profit=sum(channels,'contribution'), open=issues.length-tracking;
+  renderStoreComparison(channels,audience,stores);
+  renderGoals(audience,salesTotal);
+  const cards=audience==='owner'
+    ? [['销售额',money(salesTotal),'较前 7 天 '+rateText(salesTotal,priorTotal)],['贡献利润',signed(profit),'未扣公司固定支出'],['贡献利润率',(profit/salesTotal*100).toFixed(1)+'%','贡献利润 ÷ 销售额'],['渠道数',channels.length,'本期有销售记录']]
+    : audience==='lead'
+    ? [['团队销售额',money(salesTotal),'较前 7 天 '+rateText(salesTotal,priorTotal)],['团队订单量',sum(channels,'orders').toLocaleString(),'最近 7 天'],['待跟进事项',open,'跟进中 '+tracking+' 项'],['退款金额',money(sum(channels,'refund')),'最近 7 天']]
+    : [['销售额',money(salesTotal),'较前 7 天 '+rateText(salesTotal,priorTotal)],['订单量',sum(channels,'orders').toLocaleString(),'最近 7 天'],['待跟进事项',open,'跟进中 '+tracking+' 项'],['关注商品',new Set(issues.map(issue=>issue.sku)).size+' 个','存在供货或销量异常']];
+  const overview=renderOperatingData(audience,stores,channels);
+  const highlights=audience==='owner'?cards.filter(card=>card[0].startsWith('贡献利润')):cards.filter(card=>card[0]==='待跟进事项');
+  byId('metrics').innerHTML='<div class="overview-strip">'+[...overview,...highlights].map(([label,value,note])=>{
+    const target={'销售额':'performanceData','销量':'performanceData','广告花费':'adsData','库存覆盖不足 7 天':'inventoryData','待跟进事项':'actionPanel'}[label]??'roleData';
+    return `<div class="metric"><span class="muted">${label}</span><b>${value}</b><small>${note}</small><br><button class="subtle" data-data-panel="${target}">查看明细</button></div>`;
+  }).join('')+'</div>';
+  const owners=[...new Set(stores.map(row=>row.owner))];
+  const storeNames=stores.map(row=>row.name);
+  const skuRows=storeProducts.filter(row=>canSeeStore({channel:row.channel,owner:row.owner})).sort((a,b)=>b.now-a.now)
+    .map(row=>({search:row.product.sku+' '+row.product.name,store:row.store,owner:row.owner,cells:[row.product.sku+' · '+row.product.name,row.store,money(row.now),signed(delta([row]))]}));
+  if(audience!=='owner')dashboardTable('actionPanel',audience==='lead'?'团队跟进事项':'我的跟进事项','按到期时间排序',['事项 / 公司 SKU','店铺','当前影响','负责人 / 期限','状态','操作'],
+    [...issues].sort((a,b)=>a.due.localeCompare(b.due)).map(issue=>{
+      const status=state.tasks.has(issue.id)?'跟进中':'待处理';
+      return {search:[issue.title,issue.sku,issue.name].join(' '),store:issue.store,owner:issue.owner,type:issue.type,status,cells:[issue.title+' · '+issue.sku,issue.store,issue.type==='stock'?'需核实供货':impact(issue),issue.owner+' · '+issue.due,status,'<button data-open="'+issue.id+'">查看详情</button>']};
+    }),[['store','店铺',storeNames],['owner','负责人',owners],['type','事项类型',[['stock','供货'],['sales','销量']]],['status','状态',['待处理','跟进中']]]);
+  const costRows=[['商品成本',sum(channels,'cost')],['平台费用',sum(channels,'fees')],['履约费用',sum(channels,'fulfillment')],['广告费用',sum(channels,'ads')],['退款',sum(channels,'refund')]];
+  const storeFilters=[['store','店铺',storeNames],['owner','负责人',owners]];
+  const skuColumns=['SKU / 商品','店铺','销售额','较前 7 天'];
+  if(audience==='owner'){
+    dashboardTable('roleData','渠道收入与贡献利润','按渠道查看收入和贡献利润',['渠道','销售额','销售占比','贡献利润','贡献利润率'],channels.map(row=>({search:row.name,cells:[row.name,money(row.now),(row.now/salesTotal*100).toFixed(1)+'%',signed(row.contribution),(row.contribution/row.now*100).toFixed(1)+'%']})));
+    dashboardTable('extraData','利润构成','贡献利润 = 销售额 − 下列扣减项',['扣减项','金额','占销售额'],costRows.map(([name,value])=>({search:name,cells:[name,money(value),(value/salesTotal*100).toFixed(1)+'%']})));
+  }else if(audience==='lead'){
+    dashboardTable('roleData','团队分工与店铺表现','按店铺列出负责人和经营变化',['店铺','负责人','销售额','较前 7 天','退款'],stores.map(row=>({search:row.name+' '+row.owner,store:row.name,owner:row.owner,cells:[row.name,row.owner,money(row.now),signed(delta([row])),money(row.refund)]})),storeFilters);
+    dashboardTable('extraData','重点商品贡献','按公司 SKU 和店铺统计',skuColumns,skuRows,storeFilters);
+  }else{
+    dashboardTable('roleData','我负责的 SKU','按公司 SKU 和店铺统计',skuColumns,skuRows,[storeFilters[0]]);
+    dashboardTable('extraData','店铺费用与订单','查看本期订单、广告费和退款',['店铺','订单量','广告费','退款额'],stores.map(row=>({search:row.name,store:row.name,cells:[row.name,row.orders,money(row.ads),money(row.refund)]})),[storeFilters[0]]);
+  }
+  if(state.page==='sku'){renderCatalog();renderPairs()}
+  renderComparisons(audience,channels,stores,issues,costRows);
+  renderDetailEntries();
+  const prompts=audience==='owner'?recommended.owner:[storeQuestion,...recommended.operator];
+  byId('suggestions').innerHTML=prompts.map(prompt=>`<button type="button" data-question="${prompt}">${prompt}</button>`).join('');
+  byId('autoInsight').textContent=audience==='owner'?state.cache.get(keyFor(cases[1],'profit')):audience==='lead'?state.cache.get(keyFor(cases[1],'storeSales')):state.cache.get(baseKey(stock));
+  byId('question').placeholder='例如：'+(audience==='owner'?recommended.owner[0]:storeQuestion);
+  applyLayout();
+}
+function showDetail(issue){
+  state.active=issue.id;
+  if(issue.change){
+    byId('detailTitle').textContent=issue.title;
+    byId('detailMeta').textContent=[issue.sku,issue.name,issue.store].join(' · ');
+    byId('detailBody').innerHTML=`<h3>经营依据</h3><p>${esc(answer(issue,'facts'))}</p><h3>待核实</h3><p class="note">库存快照及同期广告费、退款只提供排查线索。请核对该 SKU 在所选日期的业务记录。</p><h3>跟进安排</h3><p>${esc(issue.owner)} · 跟进中 · ${esc(issue.due)}</p>`;
+    if(!byId('detail').open)byId('detail').showModal();
+    return;
+  }
+  const rows=visibleChannels(issue),cached=state.cache.get(baseKey(issue));
+  const max=Math.max(1,...rows.map(row=>Math.abs(delta([row]))));
+  const evidence=issue.store&&issue.type==='stock'?'<p class="note">这条事项尚无店铺库存快照，需核实可售库存和到货时间。</p>':issue.type==='stock'
+    ? `<div class="table-wrap"><table><thead><tr><th>渠道</th><th>近 7 天日均销量</th></tr></thead><tbody>${rows.map(row=>`<tr><td>${row.name}</td><td>${row.rate} 件</td></tr>`).join('')}</tbody></table></div><p class="note">${canSeePool(issue)?'共享可分配库存 '+state.forecastStock+' 件 · 预计 '+issue.eta+' 天后到货':'联系处理人核实可分配库存及预计到货时间。'}</p>`
+    : `<div class="bars">${rows.map(row=>`<div class="bar-row"><span>${row.name}</span><div class="track ${delta([row])<0?'negative':''}" aria-hidden="true"><i style="width:${100*Math.abs(delta([row]))/max}%"></i></div><strong>${signed(delta([row]))}</strong></div>`).join('')}</div><p class="note">比较区间：11-11 至 11-17 / 11-04 至 11-10 · USD</p>`;
+  byId('detailTitle').textContent=issue.title;byId('detailMeta').textContent=[issue.sku,issue.name,issue.store].filter(Boolean).join(' · ');
+  byId('detailBody').innerHTML=`<h3>经营依据</h3>${evidence}<h3>系统分析</h3><div class="box">${cached?`<span class="badge ok">分析已就绪</span><p>${cached}</p>`:'<span class="badge warn">数据已更新</span><p>最新分析尚未生成。上次结论不用于当前判断。</p>'}</div><h3>继续追问</h3><div class="pills"><button data-intent="facts">查当前数据</button>${issue.type==='stock'?'<button data-intent="allocation">共享库存怎么分？</button><button data-intent="delay">到货再晚两天怎么办？</button>':'<button data-intent="drivers">优先核查什么？</button>'}</div><div id="reply" class="result" aria-live="polite"></div><h3>处理安排</h3><p>${issue.owner} · ${issue.due} 前跟进</p><button class="primary" id="task" ${state.tasks.has(issue.id)?'disabled':''}>${state.tasks.has(issue.id)?'已加入跟进':'加入跟进'}</button>`;
+  if(!byId('detail').open)byId('detail').showModal();
+  byId('task').onclick=()=>{state.tasks.add(issue.id);render();byId('task').disabled=true;byId('task').textContent='已加入跟进'};
+}
+function request(issue,intent){
+  if(intent==='profit'&&state.role!=='owner')return Promise.resolve({text:'当前权限不包含贡献利润数据。',source:'无法查看'});
+  if(issue.store&&issue.type==='stock')return Promise.resolve({text:answer(issue,intent),source:'待核实'});
+  if(intent==='facts'){state.queries++;return Promise.resolve({text:answer(issue,intent),source:'直接查询'})}
+  if(issue.type==='stock'&&!canSeePool(issue))return Promise.resolve({text:answer(issue,intent),source:'需核实供货数据'});
+  const key=keyFor(issue,intent),session=state,cached=session.cache.get(key);
+  if(cached){session.hits++;return Promise.resolve({text:cached,source:'复用已有分析'})}
+  if(session.pending.has(key)){session.joined++;return session.pending.get(key).then(text=>({text,source:'合并同一分析请求'}))}
+  if(!session.budget)return Promise.resolve({text:'本周期的追问额度已用完，仍可查看已有分析和基础数据。',source:'暂不可生成新分析'});
+  const text=answer(issue,intent);session.budget--;session.calls++;
+  const job=new Promise(resolve=>setTimeout(()=>{session.cache.set(key,text);session.pending.delete(key);resolve(text)},420));
+  session.pending.set(key,job);return job.then(text=>({text,source:'新生成分析'}));
+}
+let replySequence=0;
+let questionSequence=0;
+const normalizeQuestion = value => value.toLowerCase().replace(/[\s？?。！!]/g,'');
+const knownQuestions=new Map([
+  [storeQuestion,[1,'storeSales']],
+  [recommended.operator[0],[0,'facts']],[recommended.operator[1],[1,'drivers']],
+  [recommended.lead[0],[1,'channelSales']],[recommended.lead[1],[0,'allocation']],[recommended.lead[2],[0,'delay']],
+  [recommended.owner[0],[1,'profit']],
+  ['共享库存如何分配',[0,'allocation']],['哪个渠道的利润率最低',[1,'profit']]
+].map(([question,target])=>[normalizeQuestion(question),target]));
+byId('suggestions').onclick=event=>{
+  const button=event.target.closest('[data-question]');
+  if(button){byId('question').value=button.dataset.question;byId('question').focus()}
+};
+async function ask(question){
+  const normalized=normalizeQuestion(question);
+  if(normalized===normalizeQuestion(recommended.operator[2])){
+    state.queries++;return {text:'当前范围近 7 天销售额为 '+money(sum(channelRows(),'now'))+'。',source:'直接查询'};
+  }
+  const target=knownQuestions.get(normalized);
+  if(!target)return {text:'当前可分析渠道销售变化、SKU 日均销量、库存分配及到货延迟；有相应权限也可查询贡献利润。请尝试推荐问题。',source:'暂无法回答'};
+  return request(cases[target[0]],target[1]);
+}
+byId('askForm').onsubmit=async event=>{
+  event.preventDefault();
+  const question=byId('question').value.trim();if(!question)return;
+  const sequence=++questionSequence,role=state.role,reply=byId('aiReply');
+  reply.textContent='正在分析…';
+  const result=await ask(question);
+  if(sequence!==questionSequence||role!==state.role)return;
+  const badge=document.createElement('span');badge.className='badge';badge.textContent=result.source;
+  const body=document.createElement('p');body.textContent=result.text;reply.replaceChildren(badge,body);
+};
+byId('detailBody').onclick=async event=>{
+  const button=event.target.closest('[data-intent]');if(!button)return;
+  const issue=[...cases,...visibleIssues()].find(entry=>entry.id===state.active),sequence=++replySequence,version=state.version,effectiveScope=scopeKey(),reply=byId('reply');
+  reply.textContent='正在查询或查找已有分析…';
+  const result=await request(issue,button.dataset.intent);
+  if(!byId('detail').open||reply!==byId('reply')||sequence!==replySequence||version!==state.version||effectiveScope!==scopeKey())return;
+  reply.replaceChildren();const badge=document.createElement('span');badge.className='badge';badge.textContent=result.source;
+  const body=document.createElement('p');body.textContent=result.text;reply.append(badge,body);render();
+};
+document.querySelector('main').onclick=event=>{
+  const target=event.target.closest('[data-open]');if(!target)return;
+  const issue=[...visibleIssues(),...cases].find(entry=>entry.id===target.dataset.open&&visibleChannels(entry).length);
+  if(issue)showDetail(issue);
+};
+function syncPage(){
+  state.page=location.hash==='#products'?'sku':'work';
+  if(byId('dataDialog').open)byId('dataDialog').close();
+  render();
+}
+const detailNames={
+  performanceData:'销量与业绩',adsData:'广告投入与产出',inventoryData:'店铺库存',actionPanel:'跟进事项'
+};
+function visibleDetails(){
+  if(state.role==='owner')return {...detailNames,inventoryData:null,actionPanel:null,channelChart:'渠道占比',roleData:'渠道利润',extraData:'利润构成'};
+  const lead=state.role.startsWith('lead');
+  return {...detailNames,channelChart:'店铺销售对比',roleData:lead?'团队分工':'我负责的 SKU',extraData:lead?'重点商品贡献':'店铺费用与订单'};
+}
+let activeDetail='performanceData';
+function renderDetailEntries(){
+  const items=Object.entries(visibleDetails()).filter(([,label])=>label);
+  if(!items.some(([id])=>id===activeDetail))activeDetail=items[0][0];
+  byId('dataTabs').innerHTML=items.map(([id,label])=>`<button data-data-panel="${id}" aria-pressed="${activeDetail===id}">${label}</button>`).join('');
+  for(const id of Object.keys(visibleDetails()))byId(id).hidden=id!==activeDetail;
+}
+function showDataPanel(event){
+  const button=event.target.closest('[data-data-panel]'),id=button?.dataset.dataPanel;
+  if(!id||!visibleDetails()[id])return;
+  const dialog=byId('dataDialog'),wasOpen=dialog.open;
+  activeDetail=id;renderDetailEntries();
+  if(!wasOpen)dialog.showModal();
+  byId('dataTabs').querySelector('[data-data-panel="'+id+'"]')?.focus();
+}
+byId('work').addEventListener('click',showDataPanel);
+byId('dataTabs').addEventListener('click',showDataPanel);
+byId('detailPanels').addEventListener('click',event=>{
+  const button=event.target.closest('[data-open]');
+  if(!button)return;
+  const issue=visibleIssues().find(entry=>entry.id===button.dataset.open);
+  if(issue)showDetail(issue);
+});
+window.addEventListener('hashchange',syncPage);
+function selectProfile(audience,platform){
+  const selectedPlatform=platform==='multi'?'multi':'amazon';
+  state.role=audience==='owner'?'owner':audience==='lead'?'lead_'+selectedPlatform:selectedPlatform;
+  catalogPage.index=1;pairPage.index=1;
+  questionSequence++;byId('aiReply').textContent='';byId('question').value='';
+  if(byId('detail').open)byId('detail').close();
+  if(byId('dataDialog').open)byId('dataDialog').close();
+  state.peer=false;render();
+}
+byId('roles').onclick=event=>{const button=event.target.closest('[data-role]');if(button)selectProfile(button.dataset.role,byId('platform').value)};
+byId('platform').onchange=()=>selectProfile(state.role.startsWith('lead')?'lead':'operator',byId('platform').value);
+const moduleTitles={metrics:'核心指标',aiPanel:'AI 经营分析',chartDeck:'业绩变化拆解',goalPanel:'我的指标',inventoryComparison:'店铺库存结构',operationsComparison:'经营对比',channelProfit:'渠道盈利对比',costStructure:'经营成本构成'};
+const wideModules=new Set(['metrics','goalPanel','costStructure']);
+const layouts=new Map();
+const layoutKey=()=> 'xuemi.workbench.layout.v1.'+state.role;
+function defaultModules(){
+  if(state.role==='owner')return ['metrics','channelProfit','aiPanel','costStructure'];
+  return ['metrics','chartDeck','aiPanel','inventoryComparison','operationsComparison','goalPanel'];
+}
+function getLayout(){
+  const key=layoutKey(), allowed=defaultModules();
+  let saved;
+  try{saved=layouts.get(key)??JSON.parse(localStorage.getItem(key))}catch(error){}
+  const legacy=id=>id==='trendPanel'||id==='channelChart'?'chartDeck':id;
+  const order=Array.isArray(saved?.order)?saved.order.map(legacy).filter(id=>allowed.includes(id)):[];
+  if(order.indexOf('aiPanel')!==-1&&order[order.indexOf('aiPanel')+1]==='chartDeck'&&saved.order.includes('trendPanel')){
+    const index=order.indexOf('aiPanel');[order[index],order[index+1]]=[order[index+1],order[index]];
+  }
+  return {order:[...new Set([...order,...allowed])],hidden:Array.isArray(saved?.hidden)?saved.hidden.filter(id=>allowed.includes(id)):[]};
+}
+function applyLayout(){
+  const board=byId('layoutBoard'), layout=getLayout();
+  for(const id of Object.keys(moduleTitles))byId(id).hidden=!layout.order.includes(id)||layout.hidden.includes(id);
+  layout.order.forEach((id,index)=>{
+    const node=byId(id);
+    if(board.children[index]!==node)board.insertBefore(node,board.children[index]??null);
+  });
+}
+let layoutDraft, draggedId;
+function renderLayoutList(){
+  const names=moduleTitles;
+  const visible=layoutDraft.order.filter(id=>!layoutDraft.hidden.includes(id));
+  const card=(id,off)=>`<div class="layout-item ${wideModules.has(id)||off?'wide':''} ${off?'is-off':''}" data-module="${id}"><div class="layout-item-top">${off?'':'<span class="layout-handle" draggable="true" aria-hidden="true">⠿</span>'}<label><input type="checkbox" data-visibility="${id}" ${off?'':'checked'}> ${names[id]}</label></div>${off?'':`<div class="layout-thumb ${id}" aria-hidden="true"></div><div class="layout-item-tools"><button data-move="-1" aria-label="前移 ${names[id]}" ${visible[0]===id?'disabled':''}>前移</button><button data-move="1" aria-label="后移 ${names[id]}" ${visible.at(-1)===id?'disabled':''}>后移</button></div>`}</div>`;
+  byId('layoutList').innerHTML=visible.map(id=>card(id,false)).join('')+
+    (layoutDraft.hidden.length?'<small class="wide">已隐藏模块</small>'+layoutDraft.order.filter(id=>layoutDraft.hidden.includes(id)).map(id=>card(id,true)).join(''):'');
+}
+function moveModule(id,position){
+  const from=layoutDraft.order.indexOf(id);
+  if(from<0||position<0||position>=layoutDraft.order.length||from===position)return;
+  layoutDraft.order.splice(from,1);layoutDraft.order.splice(position,0,id);renderLayoutList();
+}
+byId('editLayout').onclick=()=>{layoutDraft=getLayout();byId('layoutStatus').textContent='';renderLayoutList();byId('layoutDialog').showModal()};
+byId('cancelLayout').onclick=()=>byId('layoutDialog').close();
+byId('restoreLayout').onclick=()=>{layoutDraft={order:defaultModules(),hidden:[]};byId('layoutStatus').textContent='已恢复默认预览，保存后应用。';renderLayoutList()};
+byId('layoutList').onchange=event=>{
+  const id=event.target.dataset.visibility;if(!id)return;
+  layoutDraft.hidden=layoutDraft.hidden.filter(item=>item!==id);
+  if(!event.target.checked)layoutDraft.hidden.push(id);
+  renderLayoutList();
+  byId('layoutList').querySelector('[data-visibility="'+id+'"]').focus();
+};
+byId('layoutList').onclick=event=>{
+  const button=event.target.closest('[data-move]');if(!button)return;
+  const id=button.closest('[data-module]').dataset.module;
+  const visible=layoutDraft.order.filter(item=>!layoutDraft.hidden.includes(item));
+  moveModule(id,layoutDraft.order.indexOf(visible[visible.indexOf(id)+Number(button.dataset.move)]));
+  const row=byId('layoutList').querySelector('[data-module="'+id+'"]');
+  (row.querySelector('[data-move="'+button.dataset.move+'"]:not(:disabled)')??row.querySelector('input')).focus();
+};
+byId('layoutList').ondragstart=event=>{
+  const handle=event.target.closest('.layout-handle');if(!handle)return;
+  draggedId=handle.closest('[data-module]').dataset.module;
+  event.dataTransfer.effectAllowed='move';event.dataTransfer.setData('text/plain',draggedId);
+};
+function clearDropTargets(){byId('layoutList').querySelectorAll('.drop-target').forEach(row=>row.classList.remove('drop-target','drop-before','drop-after'))}
+function dropsAfter(event,row){
+  const bounds=row.getBoundingClientRect();
+  return wideModules.has(row.dataset.module)||matchMedia('(max-width:850px)').matches
+    ?event.clientY>bounds.top+bounds.height/2:event.clientX>bounds.left+bounds.width/2;
+}
+byId('layoutList').ondragover=event=>{
+  const row=event.target.closest('[data-module]');
+  clearDropTargets();
+  if(!draggedId||!row||row.dataset.module===draggedId||layoutDraft.hidden.includes(row.dataset.module))return;
+  event.preventDefault();row.classList.add('drop-target',dropsAfter(event,row)?'drop-after':'drop-before');
+};
+byId('layoutList').ondrop=event=>{
+  const row=event.target.closest('[data-module]');if(!row||!draggedId||row.dataset.module===draggedId||layoutDraft.hidden.includes(row.dataset.module))return;
+  event.preventDefault();const id=draggedId;draggedId=null;clearDropTargets();
+  const rest=layoutDraft.order.filter(item=>item!==id);
+  moveModule(id,rest.indexOf(row.dataset.module)+(dropsAfter(event,row)?1:0));
+};
+byId('layoutList').ondragend=()=>{draggedId=null;clearDropTargets()};
+byId('saveLayout').onclick=()=>{
+  if(layoutDraft.hidden.length===layoutDraft.order.length){byId('layoutStatus').textContent='请至少保留一个模块。';return}
+  const key=layoutKey();
+  layouts.set(key,layoutDraft);
+  try{localStorage.setItem(key,JSON.stringify(layoutDraft))}catch(error){}
+  applyLayout();byId('layoutDialog').close();
+};
+const pairRecords=[
+  {id:'amz-cup',channel:'Amazon',store:'Amazon 美国旗舰店',source:'AMZ-CUP-001-US'},
+  {id:'amz-lamp',channel:'Amazon',store:'Amazon 加拿大店',source:'LGT-004'},
+  {id:'amz-pack',channel:'Amazon',store:'Amazon 美国旗舰店',source:'AMZ-CUP-001-2PK-US'},
+  {id:'wm-bag',channel:'Walmart',store:'Walmart 美国店',source:'BAG-007'},
+  {id:'tt-box',channel:'TikTok Shop',store:'TikTok Shop 英国店',source:'TT-BOX-015-UK'},
+  {id:'wm-cup',channel:'Walmart',store:'Walmart 美国店',source:'WM-CUP-001',target:'CUP-001',actor:'运营D',time:'11-17 14:20'},
+  ...[
+    ['Amazon',0,'AMZ-ORG-021-US'],['Amazon',0,'AMZ-LGT-023-US'],
+    ['Amazon',1,'MAT-011'],['Amazon',1,'CA-BOX-032'],
+    ['Amazon',0,'AMZ-CUP-012-RED-US'],['Amazon',1,'CUP-026'],
+    ['Amazon',0,'AMZ-BAG-007-US','BAG-007'],['Amazon',1,'CA-HLD-018','HLD-018'],
+    ['Amazon',0,'AMZ-TRY-016-US','TRY-016'],['Amazon',1,'CA-CLP-006','CLP-006'],
+    ['Walmart',0,'HOK-005'],['Walmart',0,'WM-BAG-028-NAVY'],
+    ['Walmart',0,'BTL-024'],['Walmart',0,'WM-BOX-032-BUNDLE'],
+    ['Walmart',0,'WM-HLD-018','HLD-018'],['Walmart',0,'WM-ORG-021','ORG-021'],
+    ['Walmart',0,'WM-CUP-026','CUP-026'],['Walmart',0,'WM-TRY-016','TRY-016'],
+    ['TikTok Shop',1,'TT-MAT-011-UK'],['TikTok Shop',1,'TT-CLP-006-UK'],
+    ['TikTok Shop',0,'LGT-023'],['TikTok Shop',0,'TT-HOK-005-TRIAL'],
+    ['TikTok Shop',1,'TT-BTL-024-UK'],['TikTok Shop',0,'TT-CUP-012-US','CUP-012'],
+    ['TikTok Shop',1,'TT-HLD-018-UK','HLD-018'],['TikTok Shop',0,'TT-BAG-028-US','BAG-028'],
+    ['TikTok Shop',0,'TT-BTL-003-US','BTL-003']
+  ].map(([channel,storeIndex,source,target],index)=>({
+    id:'pair-'+index,channel,store:storeDirectory[channel][storeIndex][0],source,
+    ...(target?{target,actor:channelFacts[channel].owner,time:'11-17 15:'+String(index).padStart(2,'0')}:{})
+  }))
+];
+const pairRules={Amazon:{prefix:'AMZ-',suffix:'-US'},'TikTok Shop':{prefix:'TT-',suffix:'-UK'}};
+const skus=new Set(catalog.map(product=>product.sku));
+let pairTab='pending',editingPair=null,batchScope=[];
+const esc=value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+const options=(values,empty)=> (empty?'<option value="">'+empty+'</option>':'')+values.map(value=>'<option>'+esc(value)+'</option>').join('');
+function candidate(source,rule={}){
+  const exact=source.trim();
+  if(skus.has(exact))return {parsed:exact,target:exact,basis:'编码完全一致'};
+  let parsed=exact;
+  if(rule.prefix&&parsed.startsWith(rule.prefix))parsed=parsed.slice(rule.prefix.length);
+  if(rule.suffix&&parsed.endsWith(rule.suffix))parsed=parsed.slice(0,-rule.suffix.length);
+  return {parsed,target:skus.has(parsed)?parsed:'',basis:skus.has(parsed)?'规则解析':'未找到公司 SKU'};
+}
+function scopedPairs(){
+  return pairRecords.filter(row=>profile().scope.includes(row.channel));
+}
+function filteredPairs(){
+  const channel=byId('pairChannel').value,store=byId('pairStore').value,query=byId('pairSearch').value.trim().toLowerCase();
+  return scopedPairs().filter(row=>(!channel||row.channel===channel)&&(!store||row.store===store)&&(!query||[row.source,row.target??''].some(value=>value.toLowerCase().includes(query))));
+}
+function fillSelect(element,values,empty){
+  const prior=element.value;element.innerHTML=options(values,empty);
+  if(values.includes(prior))element.value=prior;
+}
+const catalogPage={index:1,size:10},pairPage={index:1,size:10};
+const dashboardLists=new Map();
+function dashboardTable(id,title,subtitle,columns,rows,filters=[],summarize){
+  const panel=byId(id),key=state.role+':'+id;
+  let list=dashboardLists.get(key);
+  if(!list){list={page:{index:1,size:10},query:'',selected:{}};dashboardLists.set(key,list)}
+  list.rows=rows;list.filters=filters;
+  if(panel.dataset.listKey!==key){
+    panel.dataset.listKey=key;
+    panel.innerHTML=`<div class="section-head"><div><h2>${title}</h2><p class="note">${subtitle}</p></div></div><div class="sku-toolbar"><input id="${id}Search" type="search" aria-label="搜索${title}" placeholder="搜索${title}">${filters.map(([field,label,values])=>`<select id="${id}-${field}" aria-label="筛选${label}"><option value="">全部${label}</option>${values.map(value=>{const [code,text]=Array.isArray(value)?value:[value,value];return `<option value="${esc(code)}">${esc(text)}</option>`}).join('')}</select>`).join('')}<button id="${id}Reset">重置</button></div><div class="table-wrap"><table><thead><tr>${columns.map(column=>'<th>'+column+'</th>').join('')}</tr></thead><tbody id="${id}Rows"></tbody></table></div><div id="${id}Pager" class="list-pager" role="group" aria-label="${title}分页"></div>`;
+    const search=byId(id+'Search');
+    search.value=list.query;
+    search.oninput=()=>{list.query=search.value;list.page.index=1;draw()};
+    filters.forEach(([field])=>{
+      const select=byId(id+'-'+field);select.value=list.selected[field]??'';
+      select.onchange=()=>{list.selected[field]=select.value;list.page.index=1;draw()};
+    });
+    byId(id+'Reset').onclick=()=>{
+      list.query='';search.value='';list.selected={};list.page.index=1;
+      filters.forEach(([field])=>byId(id+'-'+field).value='');draw();
+    };
+    bindPager(id+'Pager',list.page,draw);
+    if(summarize){
+      const footer=document.createElement('tfoot');footer.id=id+'Summary';
+      byId(id+'Rows').after(footer);
+    }
+  }
+  function draw(){
+    const query=list.query.trim().toLowerCase();
+    const filtered=list.rows.filter(row=>
+      (!query||[row.search,row.store,row.owner].some(value=>value?.toLowerCase().includes(query)))&&
+      list.filters.every(([field])=>!list.selected[field]||row[field]===list.selected[field]));
+    byId(id+'Rows').innerHTML=paginate(filtered,list.page,id+'Pager').map(row=>'<tr>'+row.cells.map(cell=>'<td>'+cell+'</td>').join('')+'</tr>').join('')||`<tr><td colspan="${columns.length}" class="empty">没有符合条件的记录</td></tr>`;
+    if(summarize){
+      const cells=summarize(filtered);
+      byId(id+'Summary').innerHTML=cells.length?'<tr>'+cells.map(cell=>'<td><b>'+cell+'</b></td>').join('')+'</tr>':'';
+    }
+  }
+  draw();
+}
+function paginate(rows,page,pagerId){
+  const last=Math.max(1,Math.ceil(rows.length/page.size));
+  page.index=Math.max(1,Math.min(page.index,last));
+  const start=(page.index-1)*page.size,end=Math.min(start+page.size,rows.length);
+  byId(pagerId).innerHTML=`<small role="status">共 ${rows.length} 条${rows.length?' · 显示 '+(start+1)+'–'+end+' 条':''}</small><select data-page-size aria-label="每页条数">${[10,20,50].map(size=>`<option value="${size}" ${page.size===size?'selected':''}>${size} 条 / 页</option>`).join('')}</select><button data-page-step="-1" ${page.index===1?'disabled':''}>上一页</button><span>第 ${page.index} / ${last} 页</span><button data-page-step="1" ${page.index===last?'disabled':''}>下一页</button>`;
+  return rows.slice(start,end);
+}
+function bindPager(id,page,renderList){
+  const pager=byId(id);
+  pager.onclick=event=>{
+    const button=event.target.closest('[data-page-step]');
+    if(!button||button.disabled)return;
+    page.index+=Number(button.dataset.pageStep);renderList();
+    (pager.querySelector('[data-page-step="'+button.dataset.pageStep+'"]:not(:disabled)')??pager.querySelector('select')).focus();
+  };
+  pager.onchange=event=>{
+    if(!event.target.matches('[data-page-size]'))return;
+    page.size=Number(event.target.value);page.index=1;renderList();pager.querySelector('select').focus();
+  };
+}
+function renderCatalog(){
+  fillSelect(byId('catalogChannel'),profile().scope,'全部渠道');
+  const channel=byId('catalogChannel').value,issue=byId('catalogIssue').value,query=byId('catalogSearch').value.trim().toLowerCase();
+  const personal=['amazon','multi'].includes(state.role);
+  const scopeIssues=visibleIssues();
+  const rows=scopedCatalog().filter(product=>
+    (!query||[product.sku,product.name].some(value=>value.toLowerCase().includes(query)))
+  ).map(product=>{
+    const channels=visibleChannels(product).filter(row=>!channel||row.name===channel);
+    const rows=personal?channels.flatMap(row=>{
+      const stores=storeProducts.filter(entry=>entry.product===product&&entry.channel===row.name&&canSeeStore(entry));
+      return stores.length?[{name:row.name,now:sum(stores,'now'),before:sum(stores,'before')}]:[];
+    }):channels;
+    const caseId=scopeIssues.find(entry=>entry.sku===product.sku&&rows.some(row=>entry.channels[0].name===row.name))?.id;
+    return {product,rows,caseId};
+  }).filter(entry=>entry.rows.length&&(!issue||Boolean(entry.caseId)===(issue==='yes')))
+    .sort((first,second)=>sum(second.rows,'now')-sum(first.rows,'now'));
+  byId('products').innerHTML=paginate(rows,catalogPage,'catalogPager').map(({product,rows,caseId})=>`<tr><td><strong>${product.sku}</strong><small>${product.name}</small></td><td>${rows.map(row=>row.name).join('、')}</td><td>${money(sum(rows,'now'))}</td><td>${signed(delta(rows))}</td><td>${caseId?'<button data-open="'+caseId+'">查看事项</button>':'—'}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">没有符合条件的商品</td></tr>';
+}
+const resetCatalogPage=()=>{catalogPage.index=1;renderCatalog()};
+const resetPairPage=()=>{pairPage.index=1;renderPairs()};
+byId('catalogSearch').oninput=resetCatalogPage;
+byId('catalogChannel').onchange=resetCatalogPage;
+byId('catalogIssue').onchange=resetCatalogPage;
+byId('catalogReset').onclick=()=>{for(const id of ['catalogChannel','catalogIssue','catalogSearch'])byId(id).value='';resetCatalogPage()};
+bindPager('catalogPager',catalogPage,renderCatalog);
+bindPager('pairPager',pairPage,renderPairs);
+function renderPairs(){
+  fillSelect(byId('pairChannel'),profile().scope,'全部平台');
+  const channel=byId('pairChannel').value;
+  fillSelect(byId('pairStore'),scopedPairs().filter(row=>!channel||row.channel===channel).map(row=>row.store).filter((store,index,stores)=>stores.indexOf(store)===index),'全部店铺');
+  const rows=filteredPairs().filter(row=>Boolean(row.target)===(pairTab==='paired'));
+  byId('pairPane').querySelectorAll('[data-pair-state]').forEach(button=>{
+    const paired=button.dataset.pairState==='paired', count=scopedPairs().filter(row=>Boolean(row.target)===paired).length;
+    button.setAttribute('aria-pressed',button.dataset.pairState===pairTab);
+    button.textContent=(paired?'已配对':'未配对')+'（'+count+'）';
+  });
+  byId('pairPreview').hidden=pairTab==='paired';
+  byId('pairRows').innerHTML=paginate(rows,pairPage,'pairPager').map(row=>`<tr><td><strong>${esc(row.source)}</strong></td><td>${esc(row.channel)}</td><td>${esc(row.store)}</td><td>${esc(row.target??'—')}</td><td>${row.actor?esc(row.actor+' · '+row.time):'—'}</td><td>${row.target?'—':'<button data-pair-id="'+row.id+'">配对</button>'}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">没有符合条件的记录</td></tr>';
+}
+function showPairPane(show){
+  byId('productPane').hidden=show;byId('pairPane').hidden=!show;
+  byId('showProducts').setAttribute('aria-pressed',!show);byId('showPairs').setAttribute('aria-pressed',show);
+  if(show)renderPairs();
+}
+function confirmPair(id,target){
+  const row=scopedPairs().find(entry=>entry.id===id&&!entry.target);
+  if(!row||!skus.has(target))return;
+  row.target=target;row.actor=viewer();row.time=new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date());
+}
+byId('showProducts').onclick=()=>showPairPane(false);
+byId('showPairs').onclick=()=>showPairPane(true);
+byId('pairPane').onclick=event=>{
+  const tab=event.target.closest('[data-pair-state]'),button=event.target.closest('[data-pair-id]');
+  if(tab){pairTab=tab.dataset.pairState;resetPairPage();return}
+  if(!button)return;
+  editingPair=scopedPairs().find(row=>row.id===button.dataset.pairId&&!row.target);
+  if(!editingPair)return;
+  byId('pairSource').textContent=[editingPair.source,editingPair.channel,editingPair.store].join(' · ');
+  byId('pairTarget').innerHTML='<option value="">请选择</option>'+catalog.map(product=>`<option value="${esc(product.sku)}">${esc(product.sku+' · '+product.name)}</option>`).join('');
+  byId('pairTarget').value=candidate(editingPair.source,pairRules[editingPair.channel]).target;
+  byId('pairDialog').showModal();
+};
+byId('pairForm').onsubmit=event=>{event.preventDefault();if(editingPair)confirmPair(editingPair.id,byId('pairTarget').value);byId('pairDialog').close();renderPairs()};
+byId('pairSearch').oninput=resetPairPage;
+byId('pairChannel').onchange=()=>{byId('pairStore').value='';resetPairPage()};
+byId('pairStore').onchange=resetPairPage;
+byId('pairReset').onclick=()=>{for(const id of ['pairChannel','pairStore','pairSearch'])byId(id).value='';resetPairPage()};
+const enteredRule=()=>({prefix:byId('rulePrefix').value.trim(),suffix:byId('ruleSuffix').value.trim()});
+function loadRule(){
+  const rule=pairRules[byId('ruleChannel').value]??{};
+  byId('rulePrefix').value=rule.prefix??'';byId('ruleSuffix').value=rule.suffix??'';byId('ruleResult').hidden=true;
+}
+byId('ruleOpen').onclick=()=>{fillSelect(byId('ruleChannel'),profile().scope);if(byId('pairChannel').value)byId('ruleChannel').value=byId('pairChannel').value;byId('ruleInput').value='';loadRule();byId('ruleDialog').showModal()};
+byId('ruleChannel').onchange=loadRule;
+byId('ruleTest').onclick=()=>{
+  const source=byId('ruleInput').value.trim(),result=candidate(source,enteredRule());
+  byId('ruleResult').textContent=source?'解析结果：'+(result.parsed||'—')+' · '+result.basis:'请输入待测试的平台 SKU。';byId('ruleResult').hidden=false;
+};
+byId('ruleForm').onsubmit=event=>{event.preventDefault();const channel=byId('ruleChannel').value;if(profile().scope.includes(channel))pairRules[channel]=enteredRule();byId('ruleDialog').close()};
+byId('pairPreview').onclick=()=>{
+  batchScope=filteredPairs().filter(row=>!row.target).map(row=>({row,result:candidate(row.source,pairRules[row.channel])}));
+  byId('batchTitle').textContent='批量预匹配 · 全部筛选结果（'+batchScope.length+' 条）';
+  byId('batchRows').innerHTML=batchScope.length?`<table><thead><tr><th>选择</th><th>平台 SKU / 店铺</th><th>推荐公司 SKU</th><th>依据</th></tr></thead><tbody>${batchScope.map(({row,result})=>`<tr><td><input type="checkbox" value="${row.id}" aria-label="确认 ${esc(row.source)}" ${result.target?'':'disabled'}></td><td>${esc(row.source)}<br><small>${esc(row.store)}</small></td><td>${esc(result.target||'—')}</td><td>${esc(result.basis)}</td></tr>`).join('')}</tbody></table>`:'<p class="empty">当前筛选范围内没有未配对记录</p>';
+  byId('batchSave').disabled=true;byId('batchDialog').showModal();
+};
+byId('batchRows').onchange=()=>{byId('batchSave').disabled=!byId('batchRows').querySelector('input:checked')};
+byId('batchForm').onsubmit=event=>{
+  event.preventDefault();
+  for(const input of byId('batchRows').querySelectorAll('input:checked')){
+    const entry=batchScope.find(item=>item.row.id===input.value);if(entry)confirmPair(entry.row.id,entry.result.target);
+  }
+  byId('batchDialog').close();renderPairs();
+};
+seedAnalysis();syncPage();
+</script>
+</body>
+</html>

@@ -59,6 +59,16 @@ th,.ai-prompts button{background:#edf4ff;color:#304d76}.metric{border-top:2px so
 .digest-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:6px;margin-bottom:9px}
 .digest-stats>div{padding:7px 8px;background:#f2f6fd;border-radius:6px}.digest-stats strong{display:block;margin:2px 0}
 .digest-summary{font-size:13px;margin:0;line-height:1.6}.digest-takeaway{color:var(--sub);margin-top:4px}
+.executive-table{border:1px solid var(--line);border-radius:7px}
+.executive-table table{min-width:680px;font-variant-numeric:tabular-nums}
+.executive-table th,.executive-table td{text-align:right;white-space:nowrap}
+.executive-table tr>th:first-child{text-align:left}
+.executive-table thead tr:first-child th:not(:first-child){text-align:center}
+.executive-table thead tr:nth-child(2) th:first-child{text-align:right}
+.executive-table tbody th{background:#fff}.executive-table tfoot{background:#f2f6fd;font-weight:600}
+.executive-table td small{display:block}
+.executive-table .compare-track{height:4px;margin:4px 0 0 auto;max-width:100px}
+.executive-table .compare-track span{background:var(--blue)}
 .message-preview{white-space:pre-wrap;overflow-wrap:anywhere;padding:14px;margin:10px 0 0;background:#f2f6fd;border:1px solid var(--line);border-radius:8px;font:inherit;line-height:1.65}
 @media(max-width:850px){.digest-grid{grid-template-columns:minmax(0,1fr)}}
 </style>
@@ -84,8 +94,8 @@ th,.ai-prompts button{background:#edf4ff;color:#304d76}.metric{border-top:2px so
 <section class="panel wide" id="goalPanel"></section>
 <section class="panel compare-panel" id="inventoryComparison"></section>
 <section class="panel compare-panel" id="operationsComparison"></section>
-<section class="panel compare-panel" id="channelProfit"></section>
-<section class="panel wide compare-panel" id="costStructure"></section>
+<section class="panel wide digest-card" id="executiveDigest"></section>
+<section class="panel compare-panel" id="costStructure"></section>
 <aside class="panel" id="aiPanel"><div class="section-head"><div><h2>AI 经营分析</h2><p class="note">结合当前看板的数据回答问题</p></div></div><div class="ai-body">
 <div><h3 class="system-title">系统发现</h3><div class="ai-insight" id="autoInsight"></div>
 <h3>推荐问题</h3><div class="ai-prompts" id="suggestions"></div><button class="primary chat-entry" id="openAnalysis">打开分析对话</button></div></div></aside></div></section>
@@ -714,14 +724,9 @@ function compareChart(rows,series,format){
     return `<div class="compare-item"><div class="compare-caption"><strong>${esc(row.name)}</strong><small>${values}</small></div><div class="compare-track" aria-hidden="true">${series.map(item=>`<span style="width:${Math.max(0,row[item.key])/max*100}%;background:${item.color}"></span>`).join('')}</div></div>`;
   }).join('')}</div>`;
 }
-function renderComparisons(audience,channels,stores,issues,costRows){
+function renderComparisons(audience,stores,issues,costRows){
   const blue='#165dff',green='#00875a',orange='#db7100',purple='#7954cd';
   if(audience==='owner'){
-    comparisonPanel('channelProfit','渠道盈利对比','近 7 天 · USD · 贡献利润未扣公司固定支出','roleData',
-      `<div class="compare-legend"><span><i style="background:${blue}"></i>销售额</span><span><i style="background:${green}"></i>贡献利润</span></div><div class="compare-rows">${channels.map(row=>{
-        const top=Math.max(1,...channels.flatMap(channel=>[channel.now,Math.abs(channel.contribution)]));
-        return `<div class="compare-item"><div class="compare-caption"><strong>${esc(row.name)}</strong><small>利润率 ${row.now?(row.contribution/row.now*100).toFixed(1)+'%':'—'}</small></div>${[[row.now,blue,'销售额'],[row.contribution,row.contribution<0?'#c9263e':green,'贡献利润']].map(([value,color,label])=>`<div class="compare-caption"><div class="compare-track" style="flex:1" title="${label}"><span style="width:${Math.abs(value)/top*100}%;background:${color}"></span></div><small aria-label="${label}">${value<0?signed(value):money(value)}</small></div>`).join('')}</div>`;
-      }).join('')}</div>`);
     const colors=[blue,green,orange,purple,'#d75072'],total=costRows.reduce((acc,[,value])=>acc+value,0);
     let start=0;
     const parts=costRows.map(([label,value],index)=>{
@@ -758,18 +763,18 @@ const digestLevels={high:'高优先级',watch:'需关注'};
 const signedPercent=value=>(value>0?'+':'')+value.toFixed(1)+'%';
 function buildDailyDigest(audience){
   const scope=storeProducts.filter(canSeeStore);
-  const isCompany=audience==='owner',groupBy=isCompany?'channel':'store';
+  const isLead=audience==='lead';
   const today=transactionDates[0],yesterday=transactionDates[1];
   const daily=(rows,metric)=>[metricValue(rows,metric,0,6),metricValue(rows,metric,0,5)];
   const alerts=[],salesChanges=[];
   const groups=new Map();
   for(const row of scope){
-    const name=row[groupBy];
+    const name=row.store;
     if(!groups.has(name))groups.set(name,[]);
     groups.get(name).push(row);
   }
   for(const [name,rows] of groups){
-    const filter={[groupBy]:name},add=(type,level,text,action,href)=>alerts.push({name,type,level,text,action,href});
+    const filter={store:name},add=(type,level,text,action,href)=>alerts.push({name,type,level,text,action,href});
     const [sales,priorSales]=daily(rows,'sales');
     salesChanges.push({name,delta:sales-priorSales});
     const salesDrop=priorSales?(priorSales-sales)/priorSales*100:0;
@@ -785,46 +790,89 @@ function buildDailyDigest(audience){
     if(refund-priorRefund>=5&&(refundRise>=30||!priorRefund))add('退款增加',refund-priorRefund>=25?'high':'watch',
       '退款 '+money(refund)+'，较前日 '+signed(refund-priorRefund),
       '查看退款集中在哪些 SKU 和原因。',businessLink('orders','查看退款',{...filter,view:'refunds',date:today,period:'0'}));
-    if(!isCompany){
+    if(!isLead){
       const low=rows.map(inventoryRecord).filter(row=>row.days!==null&&row.days<7);
       if(low.length)add('库存覆盖不足',low.some(row=>row.days<3)?'high':'watch',
         '11-18 08:00 快照 · '+low.length+' 个 SKU 可售不足 7 天',
         '先核对可售不足 3 天的 SKU 及在途到货时间。',businessLink('inventory','查看库存',{...filter,status:inventoryStatus[0]}));
     }
   }
-  const stats=(isCompany?['sales','orders','units','refund']:['sales','orders','cost','acos']).map(id=>{
+  const ranked=salesChanges.sort((a,b)=>a.delta-b.delta);
+  const declining=salesChanges.filter(row=>row.delta<0);
+  const leadAlerts=[];
+  if(isLead){
+    for(const [type,label,action,page,filters] of [
+      ['销售额下降','多店销售下滑','确认重点下滑店铺，由店铺负责人拆查订单与 SKU。','orders',{date:today,period:'0'}],
+      ['广告效率下滑','多店投放效率下滑','协调相关店铺负责人复盘投放，评估预算是否需要调整。','ads',{period:'0'}],
+      ['退款增加','多店退款抬升','比对店铺退款原因，识别是否需要统一处理同一批商品或履约问题。','orders',{view:'refunds',date:today,period:'0'}]
+    ]){
+      const matches=alerts.filter(row=>row.type===type);
+      if(matches.length<2)continue;
+      leadAlerts.push({name:'涉及 '+matches.length+' 家店',type:label,level:matches.some(row=>row.level==='high')?'high':'watch',
+        text:matches.slice(0,3).map(row=>row.name).join('、')+(matches.length>3?' 等':''),
+        action,href:businessLink(page,'查看业务明细',filters)});
+    }
+    const steepest=ranked[0];
+    if(steepest&&steepest.delta<=-250){
+      leadAlerts.push({name:steepest.name,type:'重点店铺拖累',level:'high',text:'单日销售额变化 '+signed(steepest.delta),
+        action:'优先与该店负责人确认损失来源及恢复计划。',
+        href:businessLink('orders','查看订单',{store:steepest.name,date:today,period:'0'})});
+    }
+    const stockBySku=new Map();
+    for(const row of scope.map(inventoryRecord)){
+      if(row.days===null||row.days>=7)continue;
+      if(!stockBySku.has(row.sku))stockBySku.set(row.sku,[]);
+      stockBySku.get(row.sku).push(row);
+    }
+    for(const [sku,rows] of stockBySku){
+      const stores=new Set(rows.map(row=>row.store));
+      if(stores.size<2)continue;
+      leadAlerts.push({name:sku,type:'跨店补货风险',level:rows.filter(row=>row.days<3).length>=2?'high':'watch',
+        text:'11-18 08:00 快照 · '+stores.size+' 家店可售不足 7 天',
+        action:'按各店可售天数和到货时间，与供应链协调补货顺序。',
+        href:businessLink('inventory','查看库存',{search:sku,status:inventoryStatus[0]})});
+    }
+  }
+  const stats=(isLead?['sales','orders','refund']:['sales','orders','cost','acos']).map(id=>{
     const [current,prior]=daily(scope,id),type=metricSpecs[id][1];
     const diff=current===null||prior===null?'—':type==='percent'?
       (current>=prior?'+':'')+(current-prior).toFixed(1)+' 个百分点':
       prior?signedPercent((current-prior)*100/prior):current===0?'0%':'前日为 0';
     return {label:metricSpecs[id][0],value:formatMetric(current,id),diff};
   });
-  const lowest=salesChanges.sort((a,b)=>a.delta-b.delta)[0];
+  if(isLead){
+    stats.push({label:'销售下滑店铺',value:declining.length+' / '+groups.size+' 家',diff:'按店铺统计'});
+  }
+  const lowest=ranked[0];
   const finding=lowest?lowest.name+(lowest.delta<0?'较前日销售额降幅最大':lowest.delta>0?'较前日销售额增幅最小':'较前日销售额持平')+'（'+signed(lowest.delta)+'）。':
     '当前没有可对比的经营数据。';
-  alerts.sort((a,b)=>Number(b.level==='high')-Number(a.level==='high'));
-  const takeaway=alerts[0]?alerts[0].name+' · '+alerts[0].type+'。'+alerts[0].action:'继续观察下一统计日的销售和退款变化。';
-  return {today,yesterday,alerts,stats,finding,takeaway,audience};
+  const roleAlerts=(isLead?leadAlerts:alerts).sort((a,b)=>Number(b.level==='high')-Number(a.level==='high'));
+  const open=visibleIssues().filter(issue=>issueStatus(issue)!=='已完成').length;
+  const takeaway=roleAlerts[0]?roleAlerts[0].name+' · '+roleAlerts[0].type+'。'+roleAlerts[0].action:'继续观察下一统计日的销售和退款变化。';
+  return {today,yesterday,alerts:roleAlerts,stats,finding,takeaway,audience,open};
 }
 let dailyDigest;
 function renderDailyDigest(audience){
   dailyDigest=buildDailyDigest(audience);
-  const {today,yesterday,alerts,stats,finding,takeaway}=dailyDigest;
+  const {today,yesterday,alerts,stats,finding,takeaway,open}=dailyDigest;
+  const isLead=audience==='lead';
   const high=alerts.filter(row=>row.level==='high').length;
-  byId('alertDigest').innerHTML=`<div class="section-head"><div><h2>异常指标</h2><p class="note">${today} · 高优先级 ${high} 项 / 需关注 ${alerts.length-high} 项</p></div>
+  byId('alertDigest').innerHTML=`<div class="section-head"><div><h2>${isLead?'团队经营预警':'店铺异常指标'}</h2><p class="note">${today} · 高优先级 ${high} 项 / 需关注 ${alerts.length-high} 项</p></div>
     <div class="digest-actions"><button type="button" data-digest="details">查看全部</button><button type="button" data-digest="alerts">钉钉预览</button></div></div>
     <div class="digest-body">${alerts.length?`<ul class="digest-alerts">${alerts.slice(0,3).map(row=>`<li><span class="alert-level" data-level="${row.level}">${digestLevels[row.level]}</span>
       <div><strong>${row.type} · ${esc(row.name)}</strong><small>${esc(row.text)}</small></div>${row.href}</li>`).join('')}</ul>`:'<p class="digest-summary">当前未发现达到预警阈值的指标。</p>'}</div>`;
-  byId('reportDigest').innerHTML=`<div class="section-head"><div><h2>经营日报</h2><p class="note">${today} · 对比 ${yesterday} · USD</p></div>
+  byId('reportDigest').innerHTML=`<div class="section-head"><div><h2>${isLead?'团队经营日报':'店铺经营日报'}</h2><p class="note">${today} · 对比 ${yesterday} · USD</p></div>
     <div class="digest-actions"><button type="button" data-digest="report">钉钉预览</button></div></div>
     <div class="digest-body"><div class="digest-stats">${stats.map(stat=>`<div><small>${stat.label}</small><strong>${stat.value}</strong><small>${stat.diff}</small></div>`).join('')}</div>
     <p class="digest-summary"><strong>主要变化</strong> ${esc(finding)}</p>
-    <p class="digest-summary digest-takeaway"><strong>建议核查</strong> ${esc(takeaway)}</p></div>`;
+    <p class="digest-summary digest-takeaway"><strong>${isLead?'协调重点':'今日处理重点'}</strong> ${esc(takeaway)}</p>
+    ${isLead?`<p class="digest-summary digest-takeaway"><strong>团队未完成事项</strong> ${open} 项 <button type="button" class="subtle" data-data-panel="actionPanel">查看跟进</button></p>`:''}</div>`;
 }
 byId('dailyDigest').onclick=event=>{
   const kind=event.target.closest('[data-digest]')?.dataset.digest;
-  if(!kind)return;
-  const {today,yesterday,alerts,stats,finding,takeaway,audience}=dailyDigest;
+  if(!kind||!dailyDigest||state.role==='owner')return;
+  const {today,yesterday,alerts,stats,finding,takeaway,audience,open}=dailyDigest;
+  const isLead=audience==='lead';
   if(kind==='details'){
     dashboardTable('alertsTable','指标预警',today+' · 日度指标与前日比较，库存按最新快照判断',
       ['优先级','对象','异常指标','触发情况','建议核查','业务明细'],
@@ -835,21 +883,59 @@ byId('dailyDigest').onclick=event=>{
     return;
   }
   const isReport=kind==='report';
-  const scope=audience==='owner'?'全公司':profile().scope.join(' / ');
-  const receivers=audience==='owner'?'公司管理群':audience==='lead'?scope+'运营群':viewer()+'（个人通知）';
-  const title=isReport?'经营日报':'经营异常提醒';
+  const receivers=isLead?viewer()+'（运营负责人）':viewer()+'（运营）';
+  const title=isReport?(isLead?'团队经营日报':'店铺经营日报'):(isLead?'团队经营预警':'店铺异常提醒');
   byId('dingPreviewTitle').textContent=title+' · 钉钉消息预览';
   byId('dingAudience').textContent='拟推送对象 · '+receivers;
   byId('dingTiming').textContent=isReport?'推送时机 · 按需发送，或在每日数据齐备后定时发送':
     '推送时机 · 新达到阈值或优先级升高时提醒';
   const list=isReport?
-    [...stats.map(stat=>stat.label+' '+stat.value+'（较前日 '+stat.diff+'）'),'','主要变化 '+finding,'建议核查 '+takeaway]:
+    [...stats.map(stat=>stat.label+' '+stat.value+(stat.diff?'（'+(stat.label==='销售下滑店铺'?'':'较前日 ')+stat.diff+'）':'')),'',
+      '主要变化 '+finding,(isLead?'协调重点 ':'今日处理重点 ')+takeaway,
+      ...(isLead?['团队未完成事项 '+open+' 项']:[])]:
     [alerts.length?'共 '+alerts.length+' 项异常，以下为优先处理项。':'当前没有需要推送的异常。','',
       ...alerts.slice(0,3).map(row=>'['+digestLevels[row.level]+'] '+row.name+' · '+row.type+'\n'+row.text+'\n'+row.action),
-      ...(alerts.length>3?['','其余 '+(alerts.length-3)+' 项可在学米「异常指标」查看。']:[])];
+      ...(alerts.length>3?['','其余 '+(alerts.length-3)+' 项可在学米看板查看。']:[])];
   byId('dingMessage').textContent=[title,today+(isReport?' 对比 '+yesterday:''),'',...list].join('\n');
   byId('dingPreview').showModal();
 };
+function renderExecutiveDigest(channels){
+  const total=sum(channels,'now'),prior=sum(channels,'before'),profit=sum(channels,'contribution');
+  const ranked=[...channels].sort((a,b)=>b.now-a.now);
+  const topGrowth=[...ranked].sort((a,b)=>delta([b])-delta([a]))[0];
+  const mostSales=ranked[0];
+  const weakestMargin=channels.filter(row=>row.now>0).sort((a,b)=>a.contribution/a.now-b.contribution/b.now)[0];
+  const pct=(amount,base)=>base>0?(100*amount/base).toFixed(1)+'%':'—';
+  const views=[
+    ['增长来源',topGrowth&&delta([topGrowth])>0?topGrowth.name+' '+signed(delta([topGrowth])):'暂无渠道销售额增长',
+      '销售额增加最多的渠道'],
+    ['利润质量',weakestMargin?weakestMargin.name+' '+pct(weakestMargin.contribution,weakestMargin.now):'暂无可比利润率',
+      '贡献利润率最低的渠道'],
+    ['收入集中度',mostSales&&total>0?mostSales.name+' '+pct(mostSales.now,total):'暂无收入数据',
+      '最大渠道的销售额占比']
+  ];
+  const rowCells=(now,before,contribution,showBar)=>{
+    const change=now-before;
+    const amountClass=change<0?'negative-text':change>0?'positive':'';
+    const share=total>0?100*now/total:0;
+    return `<td>${money(now)}</td><td>${money(before)}</td>
+      <td class="${amountClass}">${signed(change)}<small>${before>0?signedPercent(100*change/before):'—'}</small></td>
+      <td class="${contribution<0?'negative-text':''}">${contribution<0?signed(contribution):money(contribution)}</td>
+      <td>${pct(contribution,now)}</td><td>${pct(now,total)}${showBar?`<div class="compare-track" aria-hidden="true"><span style="width:${share}%"></span></div>`:''}</td>`;
+  };
+  byId('executiveDigest').innerHTML=`<div class="section-head"><div><h2>经营决策摘要</h2><p class="note">近 7 天对比前 7 天 · USD</p></div></div>
+    <div class="digest-body"><div class="digest-stats">${views.map(([label,value,context])=>
+      `<div><small>${label}</small><strong>${esc(value)}</strong><small>${context}</small></div>`).join('')}</div>
+    <div class="table-wrap executive-table"><table aria-label="各渠道增长、利润与收入占比">
+      <thead><tr><th scope="col" rowspan="2">渠道</th><th scope="colgroup" colspan="3">增长来源</th>
+        <th scope="colgroup" colspan="2">利润质量</th><th scope="colgroup">收入集中度</th></tr>
+        <tr><th scope="col">本期销售额</th><th scope="col">前期销售额</th><th scope="col">销售额变化</th>
+        <th scope="col">贡献利润</th><th scope="col">贡献利润率</th><th scope="col">本期销售占比</th></tr></thead>
+      <tbody>${ranked.map(row=>`<tr><th scope="row">${esc(row.name)}</th>${rowCells(row.now,row.before,row.contribution,true)}</tr>`).join('')
+        ||'<tr><td colspan="7" class="empty">暂无渠道经营数据</td></tr>'}</tbody>
+      ${ranked.length?`<tfoot><tr><th scope="row">公司合计</th>${rowCells(total,prior,profit,false)}</tr></tfoot>`:''}
+    </table></div><p class="note">贡献利润未扣除公司固定支出。</p></div>`;
+}
 function render(){
   const current=profile(),stock=cases[0];
   if(state.page==='settlements'&&state.role!=='owner')state.page='work';
@@ -874,7 +960,11 @@ function render(){
   }
   if(audience!=='owner')byId('platform').value=state.role.endsWith('multi')?'multi':'amazon';
   const channels=channelRows(),stores=currentStores(), issues=visibleIssues(), tracking=issues.filter(issue=>state.tasks.has(issue.id)).length;
-  if(dashboard)renderDailyDigest(audience);
+  if(dashboard&&audience==='owner'){
+    dailyDigest=undefined;
+    byId('alertDigest').innerHTML='';byId('reportDigest').innerHTML='';
+    renderExecutiveDigest(channels);
+  }else if(dashboard)renderDailyDigest(audience);
   const salesTotal=sum(channels,'now'), priorTotal=sum(channels,'before'), profit=sum(channels,'contribution'), open=issues.filter(issue=>['待处理','待开始'].includes(issueStatus(issue))).length;
   renderStoreComparison(channels,audience,stores);
   renderGoals(audience,salesTotal);
@@ -902,9 +992,10 @@ function render(){
   const storeFilters=[['store','店铺',storeNames],['owner','负责人',owners]];
   const skuColumns=['SKU / 商品','店铺','销售额','较前 7 天'];
   if(audience==='owner'){
-    dashboardTable('roleData','渠道收入与贡献利润','按渠道查看收入和贡献利润',['渠道','销售额','销售占比','贡献利润','贡献利润率'],
+    dashboardTable('roleData','渠道收入与贡献利润','按渠道比较本期销售额、前期销售额及贡献利润',['渠道','本期销售额','前期销售额','销售额变化','销售占比','贡献利润','贡献利润率'],
       channels.map(row=>({search:row.name,cells:[businessLink('settlements',row.name,{channel:row.name}),
-        money(row.now),(row.now/salesTotal*100).toFixed(1)+'%',signed(row.contribution),(row.contribution/row.now*100).toFixed(1)+'%']})));
+        money(row.now),money(row.before),signed(delta([row])),(row.now/salesTotal*100).toFixed(1)+'%',
+        signed(row.contribution),(row.contribution/row.now*100).toFixed(1)+'%']})));
     dashboardTable('extraData','利润构成','贡献利润 = 销售额 − 下列扣减项',['扣减项','金额','占销售额'],
       costRows.map(([name,value])=>({search:name,cells:[businessLink('settlements',name,{type:name}),money(value),(value/salesTotal*100).toFixed(1)+'%']})));
   }else if(audience==='lead'){
@@ -917,7 +1008,7 @@ function render(){
   if(state.page==='sku'){renderCatalog();renderPairs()}
   if(state.page==='listings'||state.page==='shops')renderSourceDirectory();
   if(Object.hasOwn(businessPages,state.page))renderBusinessDirectory(stores,channels);
-  renderComparisons(audience,channels,stores,issues,costRows);
+  renderComparisons(audience,stores,issues,costRows);
   renderDetailEntries();
   const prompts=audience==='owner'?recommended.owner:[storeQuestion,adEvidenceQuestion,...recommended.operator];
   byId('suggestions').innerHTML=prompts.map(prompt=>`<button type="button" data-question="${prompt}">${prompt}</button>`).join('');
@@ -1383,12 +1474,12 @@ function selectProfile(audience,platform,operator=''){
 byId('roles').onclick=event=>{const button=event.target.closest('[data-role]');if(button)selectProfile(button.dataset.role,byId('platform').value)};
 byId('platform').onchange=()=>selectProfile(state.role.startsWith('lead')?'lead':'operator',byId('platform').value);
 byId('operatorPreview').onchange=event=>selectProfile('operator',byId('platform').value,event.target.value);
-const moduleTitles={metrics:'核心指标',dailyDigest:'异常指标与经营日报',aiPanel:'AI 经营分析',chartDeck:'业绩变化拆解',goalPanel:'我的指标',inventoryComparison:'店铺库存结构',operationsComparison:'经营对比',channelProfit:'渠道盈利对比',costStructure:'经营成本构成'};
-const wideModules=new Set(['metrics','dailyDigest','goalPanel','costStructure']);
+const moduleTitles={metrics:'核心指标',dailyDigest:'异常指标与经营日报',executiveDigest:'经营决策摘要',aiPanel:'AI 经营分析',chartDeck:'业绩变化拆解',goalPanel:'我的指标',inventoryComparison:'店铺库存结构',operationsComparison:'经营对比',costStructure:'经营成本构成'};
+const wideModules=new Set(['metrics','dailyDigest','executiveDigest','goalPanel']);
 const layouts=new Map();
 const layoutKey=()=> 'xuemi.workbench.layout.v1.'+state.role;
 function defaultModules(){
-  if(state.role==='owner')return ['metrics','dailyDigest','channelProfit','aiPanel','costStructure'];
+  if(state.role==='owner')return ['metrics','executiveDigest','costStructure','aiPanel'];
   return ['metrics','dailyDigest','chartDeck','aiPanel','inventoryComparison','operationsComparison','goalPanel'];
 }
 function getLayout(){
@@ -1400,7 +1491,8 @@ function getLayout(){
   if(order.indexOf('aiPanel')!==-1&&order[order.indexOf('aiPanel')+1]==='chartDeck'&&saved.order.includes('trendPanel')){
     const index=order.indexOf('aiPanel');[order[index],order[index+1]]=[order[index+1],order[index]];
   }
-  if(order.length&&!order.includes('dailyDigest'))order.splice(order.indexOf('metrics')+1,0,'dailyDigest');
+  const digest=state.role==='owner'?'executiveDigest':'dailyDigest';
+  if(order.length&&!order.includes(digest))order.splice(order.indexOf('metrics')+1,0,digest);
   return {order:[...new Set([...order,...allowed])],hidden:Array.isArray(saved?.hidden)?saved.hidden.filter(id=>allowed.includes(id)):[]};
 }
 function applyLayout(){

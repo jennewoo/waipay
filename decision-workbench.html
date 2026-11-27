@@ -49,6 +49,18 @@ th,.ai-prompts button{background:#edf4ff;color:#304d76}.metric{border-top:2px so
   .thread-sidebar[data-open=true]{display:flex}
   #toggleThreads{display:inline-block}
 }
+.digest-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.digest-card{min-width:0;display:flex;flex-direction:column}
+.digest-body{padding:0 13px 13px;flex:1}.digest-actions{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.digest-actions button,.digest-actions select{padding:5px 8px;font-size:12px}.digest-alerts{list-style:none;margin:0;padding:0}
+.digest-alerts li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
+.digest-alerts li:last-child{border-bottom:0}.digest-alerts small,.digest-stats small{display:block}
+.alert-level{display:inline-block;padding:2px 6px;border-radius:4px;font-size:11px;white-space:nowrap;background:#fff1da;color:#884600}
+.alert-level[data-level=high]{background:#ffeaed;color:#ac2035}
+.digest-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:6px;margin-bottom:9px}
+.digest-stats>div{padding:7px 8px;background:#f2f6fd;border-radius:6px}.digest-stats strong{display:block;margin:2px 0}
+.digest-summary{font-size:13px;margin:0;line-height:1.6}.digest-takeaway{color:var(--sub);margin-top:4px}
+.message-preview{white-space:pre-wrap;overflow-wrap:anywhere;padding:14px;margin:10px 0 0;background:#f2f6fd;border:1px solid var(--line);border-radius:8px;font:inherit;line-height:1.65}
+@media(max-width:850px){.digest-grid{grid-template-columns:minmax(0,1fr)}}
 </style>
 </head>
 <body>
@@ -64,6 +76,10 @@ th,.ai-prompts button{background:#edf4ff;color:#304d76}.metric{border-top:2px so
 </nav></aside><main>
 <div class="page-head"><h1 id="title"></h1><div class="page-actions"><time id="pagePeriod">统计周期：11-11 至 11-17（对比前 7 天） · USD</time><button id="editLayout" type="button">自定义布局</button></div></div>
 <section id="work"><div class="layout-board" id="layoutBoard"><div class="wide" id="metrics"></div>
+<div class="wide digest-grid" id="dailyDigest">
+  <section class="panel digest-card" id="alertDigest" aria-label="异常指标"></section>
+  <section class="panel digest-card" id="reportDigest" aria-label="经营日报"></section>
+</div>
 <div class="chart-deck" id="chartDeck"><section class="panel" id="trendPanel"></section></div>
 <section class="panel wide" id="goalPanel"></section>
 <section class="panel compare-panel" id="inventoryComparison"></section>
@@ -90,6 +106,17 @@ th,.ai-prompts button{background:#edf4ff;color:#304d76}.metric{border-top:2px so
 <dialog id="recordDialog" aria-labelledby="recordTitle">
   <div class="dialog-head"><h2 id="recordTitle"></h2><form method="dialog"><button>关闭</button></form></div>
   <div id="recordBody" class="dialog-body"></div>
+</dialog>
+<dialog id="alertsDialog" aria-labelledby="alertsTitle">
+  <div class="dialog-head"><h2 id="alertsTitle">异常明细</h2><form method="dialog"><button>关闭</button></form></div>
+  <div class="dialog-body"><div id="alertsTable"></div></div>
+</dialog>
+<dialog id="dingPreview" aria-labelledby="dingPreviewTitle">
+  <div class="dialog-head"><h2 id="dingPreviewTitle">钉钉消息预览</h2><form method="dialog"><button>关闭</button></form></div>
+  <div class="dialog-body">
+    <p class="note" id="dingAudience"></p><p class="note" id="dingTiming"></p>
+    <pre class="message-preview" id="dingMessage"></pre>
+  </div>
 </dialog>
 <dialog id="analysisDrawer" class="ai-drawer" aria-labelledby="analysisTitle">
 <div class="dialog-head"><h2 id="analysisTitle">AI 经营分析</h2><div class="analysis-actions">
@@ -727,6 +754,102 @@ function renderComparisons(audience,channels,stores,issues,costRows){
       compareChart(ads,[{key:'ads',label:'广告花费',color:blue}],money));
   }
 }
+const digestLevels={high:'高优先级',watch:'需关注'};
+const signedPercent=value=>(value>0?'+':'')+value.toFixed(1)+'%';
+function buildDailyDigest(audience){
+  const scope=storeProducts.filter(canSeeStore);
+  const isCompany=audience==='owner',groupBy=isCompany?'channel':'store';
+  const today=transactionDates[0],yesterday=transactionDates[1];
+  const daily=(rows,metric)=>[metricValue(rows,metric,0,6),metricValue(rows,metric,0,5)];
+  const alerts=[],salesChanges=[];
+  const groups=new Map();
+  for(const row of scope){
+    const name=row[groupBy];
+    if(!groups.has(name))groups.set(name,[]);
+    groups.get(name).push(row);
+  }
+  for(const [name,rows] of groups){
+    const filter={[groupBy]:name},add=(type,level,text,action,href)=>alerts.push({name,type,level,text,action,href});
+    const [sales,priorSales]=daily(rows,'sales');
+    salesChanges.push({name,delta:sales-priorSales});
+    const salesDrop=priorSales?(priorSales-sales)/priorSales*100:0;
+    if(salesDrop>=15)add('销售额下降',salesDrop>=30?'high':'watch',money(sales)+'，较前日 '+signedPercent(-salesDrop),
+      '先核对订单量和变化最大的公司 SKU。',businessLink('orders','查看订单',{...filter,date:today,period:'0'}));
+    const [cost,priorCost]=daily(rows,'cost'),[acos,priorAcos]=daily(rows,'acos');
+    const costRise=priorCost?(cost-priorCost)/priorCost*100:0,acosRise=acos!==null&&priorAcos!==null?acos-priorAcos:0;
+    if(costRise>=20&&acosRise>=3)add('广告效率下滑',acosRise>=8?'high':'watch',
+      '花费 '+money(cost)+'（'+signedPercent(costRise)+'），ACOS '+acos.toFixed(1)+'%（+'+acosRise.toFixed(1)+' 个百分点）',
+      '检查花费上涨的活动和推广商品。',businessLink('ads','查看同期广告',{...filter,period:'0'}));
+    const [refund,priorRefund]=daily(rows,'refund');
+    const refundRise=priorRefund?(refund-priorRefund)/priorRefund*100:0;
+    if(refund-priorRefund>=5&&(refundRise>=30||!priorRefund))add('退款增加',refund-priorRefund>=25?'high':'watch',
+      '退款 '+money(refund)+'，较前日 '+signed(refund-priorRefund),
+      '查看退款集中在哪些 SKU 和原因。',businessLink('orders','查看退款',{...filter,view:'refunds',date:today,period:'0'}));
+    if(!isCompany){
+      const low=rows.map(inventoryRecord).filter(row=>row.days!==null&&row.days<7);
+      if(low.length)add('库存覆盖不足',low.some(row=>row.days<3)?'high':'watch',
+        '11-18 08:00 快照 · '+low.length+' 个 SKU 可售不足 7 天',
+        '先核对可售不足 3 天的 SKU 及在途到货时间。',businessLink('inventory','查看库存',{...filter,status:inventoryStatus[0]}));
+    }
+  }
+  const stats=(isCompany?['sales','orders','units','refund']:['sales','orders','cost','acos']).map(id=>{
+    const [current,prior]=daily(scope,id),type=metricSpecs[id][1];
+    const diff=current===null||prior===null?'—':type==='percent'?
+      (current>=prior?'+':'')+(current-prior).toFixed(1)+' 个百分点':
+      prior?signedPercent((current-prior)*100/prior):current===0?'0%':'前日为 0';
+    return {label:metricSpecs[id][0],value:formatMetric(current,id),diff};
+  });
+  const lowest=salesChanges.sort((a,b)=>a.delta-b.delta)[0];
+  const finding=lowest?lowest.name+(lowest.delta<0?'较前日销售额降幅最大':lowest.delta>0?'较前日销售额增幅最小':'较前日销售额持平')+'（'+signed(lowest.delta)+'）。':
+    '当前没有可对比的经营数据。';
+  alerts.sort((a,b)=>Number(b.level==='high')-Number(a.level==='high'));
+  const takeaway=alerts[0]?alerts[0].name+' · '+alerts[0].type+'。'+alerts[0].action:'继续观察下一统计日的销售和退款变化。';
+  return {today,yesterday,alerts,stats,finding,takeaway,audience};
+}
+let dailyDigest;
+function renderDailyDigest(audience){
+  dailyDigest=buildDailyDigest(audience);
+  const {today,yesterday,alerts,stats,finding,takeaway}=dailyDigest;
+  const high=alerts.filter(row=>row.level==='high').length;
+  byId('alertDigest').innerHTML=`<div class="section-head"><div><h2>异常指标</h2><p class="note">${today} · 高优先级 ${high} 项 / 需关注 ${alerts.length-high} 项</p></div>
+    <div class="digest-actions"><button type="button" data-digest="details">查看全部</button><button type="button" data-digest="alerts">钉钉预览</button></div></div>
+    <div class="digest-body">${alerts.length?`<ul class="digest-alerts">${alerts.slice(0,3).map(row=>`<li><span class="alert-level" data-level="${row.level}">${digestLevels[row.level]}</span>
+      <div><strong>${row.type} · ${esc(row.name)}</strong><small>${esc(row.text)}</small></div>${row.href}</li>`).join('')}</ul>`:'<p class="digest-summary">当前未发现达到预警阈值的指标。</p>'}</div>`;
+  byId('reportDigest').innerHTML=`<div class="section-head"><div><h2>经营日报</h2><p class="note">${today} · 对比 ${yesterday} · USD</p></div>
+    <div class="digest-actions"><button type="button" data-digest="report">钉钉预览</button></div></div>
+    <div class="digest-body"><div class="digest-stats">${stats.map(stat=>`<div><small>${stat.label}</small><strong>${stat.value}</strong><small>${stat.diff}</small></div>`).join('')}</div>
+    <p class="digest-summary"><strong>主要变化</strong> ${esc(finding)}</p>
+    <p class="digest-summary digest-takeaway"><strong>建议核查</strong> ${esc(takeaway)}</p></div>`;
+}
+byId('dailyDigest').onclick=event=>{
+  const kind=event.target.closest('[data-digest]')?.dataset.digest;
+  if(!kind)return;
+  const {today,yesterday,alerts,stats,finding,takeaway,audience}=dailyDigest;
+  if(kind==='details'){
+    dashboardTable('alertsTable','指标预警',today+' · 日度指标与前日比较，库存按最新快照判断',
+      ['优先级','对象','异常指标','触发情况','建议核查','业务明细'],
+      alerts.map(row=>({...row,search:[row.name,row.type,row.text].join(' '),cells:[digestLevels[row.level],
+        esc(row.name),row.type,esc(row.text),esc(row.action),row.href]})),
+      [['level','优先级',Object.entries(digestLevels)],['type','指标',[...new Set(alerts.map(row=>row.type))]]]);
+    byId('alertsDialog').showModal();
+    return;
+  }
+  const isReport=kind==='report';
+  const scope=audience==='owner'?'全公司':profile().scope.join(' / ');
+  const receivers=audience==='owner'?'公司管理群':audience==='lead'?scope+'运营群':viewer()+'（个人通知）';
+  const title=isReport?'经营日报':'经营异常提醒';
+  byId('dingPreviewTitle').textContent=title+' · 钉钉消息预览';
+  byId('dingAudience').textContent='拟推送对象 · '+receivers;
+  byId('dingTiming').textContent=isReport?'推送时机 · 按需发送，或在每日数据齐备后定时发送':
+    '推送时机 · 新达到阈值或优先级升高时提醒';
+  const list=isReport?
+    [...stats.map(stat=>stat.label+' '+stat.value+'（较前日 '+stat.diff+'）'),'','主要变化 '+finding,'建议核查 '+takeaway]:
+    [alerts.length?'共 '+alerts.length+' 项异常，以下为优先处理项。':'当前没有需要推送的异常。','',
+      ...alerts.slice(0,3).map(row=>'['+digestLevels[row.level]+'] '+row.name+' · '+row.type+'\n'+row.text+'\n'+row.action),
+      ...(alerts.length>3?['','其余 '+(alerts.length-3)+' 项可在学米「异常指标」查看。']:[])];
+  byId('dingMessage').textContent=[title,today+(isReport?' 对比 '+yesterday:''),'',...list].join('\n');
+  byId('dingPreview').showModal();
+};
 function render(){
   const current=profile(),stock=cases[0];
   if(state.page==='settlements'&&state.role!=='owner')state.page='work';
@@ -751,6 +874,7 @@ function render(){
   }
   if(audience!=='owner')byId('platform').value=state.role.endsWith('multi')?'multi':'amazon';
   const channels=channelRows(),stores=currentStores(), issues=visibleIssues(), tracking=issues.filter(issue=>state.tasks.has(issue.id)).length;
+  if(dashboard)renderDailyDigest(audience);
   const salesTotal=sum(channels,'now'), priorTotal=sum(channels,'before'), profit=sum(channels,'contribution'), open=issues.filter(issue=>['待处理','待开始'].includes(issueStatus(issue))).length;
   renderStoreComparison(channels,audience,stores);
   renderGoals(audience,salesTotal);
@@ -1206,6 +1330,8 @@ function syncPage(){
   state.page=page==='settlements'&&state.role!=='owner'?'work':page;
   if(byId('dataDialog').open)byId('dataDialog').close();
   if(byId('analysisDrawer').open)byId('analysisDrawer').close();
+  if(byId('alertsDialog').open)byId('alertsDialog').close();
+  if(byId('dingPreview').open)byId('dingPreview').close();
   render();
   if(Object.hasOwn(businessPages,state.page))applyBusinessRoute();
 }
@@ -1249,19 +1375,21 @@ function selectProfile(audience,platform,operator=''){
   byId('question').value='';clearAttachmentDraft();renderConversation(true);
   if(byId('detail').open)byId('detail').close();
   if(byId('dataDialog').open)byId('dataDialog').close();
+  if(byId('alertsDialog').open)byId('alertsDialog').close();
+  if(byId('dingPreview').open)byId('dingPreview').close();
   if(state.page==='settlements'&&state.role!=='owner'){location.hash='#workbench';syncPage()}
   else render();
 }
 byId('roles').onclick=event=>{const button=event.target.closest('[data-role]');if(button)selectProfile(button.dataset.role,byId('platform').value)};
 byId('platform').onchange=()=>selectProfile(state.role.startsWith('lead')?'lead':'operator',byId('platform').value);
 byId('operatorPreview').onchange=event=>selectProfile('operator',byId('platform').value,event.target.value);
-const moduleTitles={metrics:'核心指标',aiPanel:'AI 经营分析',chartDeck:'业绩变化拆解',goalPanel:'我的指标',inventoryComparison:'店铺库存结构',operationsComparison:'经营对比',channelProfit:'渠道盈利对比',costStructure:'经营成本构成'};
-const wideModules=new Set(['metrics','goalPanel','costStructure']);
+const moduleTitles={metrics:'核心指标',dailyDigest:'异常指标与经营日报',aiPanel:'AI 经营分析',chartDeck:'业绩变化拆解',goalPanel:'我的指标',inventoryComparison:'店铺库存结构',operationsComparison:'经营对比',channelProfit:'渠道盈利对比',costStructure:'经营成本构成'};
+const wideModules=new Set(['metrics','dailyDigest','goalPanel','costStructure']);
 const layouts=new Map();
 const layoutKey=()=> 'xuemi.workbench.layout.v1.'+state.role;
 function defaultModules(){
-  if(state.role==='owner')return ['metrics','channelProfit','aiPanel','costStructure'];
-  return ['metrics','chartDeck','aiPanel','inventoryComparison','operationsComparison','goalPanel'];
+  if(state.role==='owner')return ['metrics','dailyDigest','channelProfit','aiPanel','costStructure'];
+  return ['metrics','dailyDigest','chartDeck','aiPanel','inventoryComparison','operationsComparison','goalPanel'];
 }
 function getLayout(){
   const key=layoutKey(), allowed=defaultModules();
@@ -1272,6 +1400,7 @@ function getLayout(){
   if(order.indexOf('aiPanel')!==-1&&order[order.indexOf('aiPanel')+1]==='chartDeck'&&saved.order.includes('trendPanel')){
     const index=order.indexOf('aiPanel');[order[index],order[index+1]]=[order[index+1],order[index]];
   }
+  if(order.length&&!order.includes('dailyDigest'))order.splice(order.indexOf('metrics')+1,0,'dailyDigest');
   return {order:[...new Set([...order,...allowed])],hidden:Array.isArray(saved?.hidden)?saved.hidden.filter(id=>allowed.includes(id)):[]};
 }
 function applyLayout(){

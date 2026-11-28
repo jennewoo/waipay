@@ -71,6 +71,12 @@ th,.ai-prompts button{background:#edf4ff;color:#304d76}.metric{border-top:2px so
 .executive-table .compare-track span{background:var(--blue)}
 .message-preview{white-space:pre-wrap;overflow-wrap:anywhere;padding:14px;margin:10px 0 0;background:#f2f6fd;border:1px solid var(--line);border-radius:8px;font:inherit;line-height:1.65}
 @media(max-width:850px){.digest-grid{grid-template-columns:minmax(0,1fr)}}
+.prompt-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.prompt-grid .prompt-card{display:grid;gap:2px;min-width:0;padding:8px 9px;text-align:left;background:#fff;border:1px solid var(--line);color:var(--ink)}
+.prompt-grid .prompt-card:hover{border-color:#a1bbfb;background:#f0f5ff}
+.prompt-card small{color:#2356cd;font-size:11px}.prompt-card strong{font-size:13px}.prompt-card span{color:var(--sub);font-size:11px}
+.prompt-welcome{padding:6px 0}.prompt-welcome h3{font-size:14px;margin:0 0 8px}.prompt-welcome .prompt-grid{gap:9px}
+@media(max-width:400px){.prompt-welcome .prompt-grid{grid-template-columns:minmax(0,1fr)}}
 </style>
 </head>
 <body>
@@ -671,6 +677,89 @@ const recommended={
   owner:['哪个渠道的贡献利润率最低？','哪个渠道拖累了销售额？','当前范围近 7 天销售额是多少？']
 };
 const storeQuestion='哪家店铺的销售额变化最值得关注？';
+const analysisPrompts=[
+  {id:'overview',group:'经营总览',title:'经营速览',description:'先看关键指标和优先事项',
+    prompt:'请生成我当前可见范围的经营速览：汇总最近 7 天销售额、订单量、广告花费、ACOS 和退款额，与前 7 天对比。指出最需要关注的变化，列出优先核查事项；请注明分析口径。'},
+  {id:'sales',group:'销售表现',title:'业绩变动拆解',description:'找到销售变化最大的店铺或渠道',
+    prompt:'请对比当前范围最近 7 天与前 7 天的销售额，按店铺或渠道拆解变化，列出变动金额最大的三个对象，并给出下一步核查建议。'},
+  {id:'ads',group:'广告投放',title:'广告效率诊断',description:'对照花费、广告销售额和 ACOS',
+    prompt:'请找出当前范围最近 7 天广告花费最高的活动，与前 7 天对比花费、归因销售额和 ACOS，并指出应优先核查的推广商品。'},
+  {id:'inventory',group:'库存供货',title:'补货优先级',description:'按可售天数找出优先补货项',audience:'operations',
+    prompt:'请按最新库存快照和最近 7 天日均销量，列出我可见店铺中可售天数最少、且不足 7 天的三个 SKU。列出可售和在途数量，并说明优先核查什么。'},
+  {id:'refund',group:'售后退款',title:'退款变化排查',description:'定位退款增量集中的公司 SKU',
+    prompt:'请对比当前范围最近 7 天和前 7 天的退款额，按公司 SKU 找出退款增加最多的三个商品，列出增加金额，并给出核查退款原因的建议。'},
+  {id:'profit',group:'利润与费用',title:'渠道盈利比较',description:'比较渠道利润率和主要费用',audience:'owner',
+    prompt:'请比较最近 7 天各渠道的销售额、贡献利润和贡献利润率。找出利润率最低的渠道和金额最大的扣减项，并给出复核建议。'}
+];
+const visibleAnalysisPrompts=()=>analysisPrompts.filter(item=>
+  !item.audience||(state.role==='owner'?item.audience==='owner':item.audience==='operations'));
+function promptCards(){
+  return '<div class="prompt-grid">'+visibleAnalysisPrompts().map(item=>
+    `<button class="prompt-card" type="button" data-analysis-prompt="${item.id}">
+      <small>${item.group}</small><strong>${item.title}</strong><span>${item.description}</span>
+    </button>`).join('')+'</div>';
+}
+function findAnalysisPrompt(question){
+  const normalize=value=>normalizeQuestion(value).replace(/[，,。；;、：:]/g,'');
+  return visibleAnalysisPrompts().find(item=>normalize(item.prompt)===normalize(question));
+}
+function runAnalysisPrompt(item,followup=''){
+  const rows=storeProducts.filter(canSeeStore),isOwner=state.role==='owner';
+  const heading='近 7 天（11-11 至 11-17），对比前 7 天（11-04 至 11-10）。';
+  const comparables=isOwner?channelRows():currentStores();
+  const ranked=[...comparables].sort((a,b)=>Math.abs(delta([b]))-Math.abs(delta([a])));
+  let text,next,evidence;
+  if(item.id==='overview'){
+    const metrics=['sales','orders','cost','acos','refund'].map(metric=>{
+      const change=periodNote(metricValue(rows,metric,0,null),metricValue(rows,metric,1,null),metricSpecs[metric][1]);
+      return metricSpecs[metric][0]+' '+formatMetric(metricValue(rows,metric,0,null),metric)+'（'+change+'）';
+    });
+    const top=ranked[0];
+    text=heading+'\n'+metrics.join('\n');
+    if(top){
+      text+='\n销售额变动最大的'+(isOwner?'渠道':'店铺')+'是 '+top.name+'（'+signed(delta([top]))+'）。';
+      evidence={page:'orders',period:'0',...(isOwner?{channel:top.name}:{store:top.name})};
+    }
+    next='先核对销售变动最大的对象，再对照该范围的广告花费、退款和订单商品结构。';
+  }else if(item.id==='sales'){
+    const top=ranked[0];
+    text=heading+'\n'+(top?ranked.slice(0,3).map(row=>row.name+'：'+money(row.before)+' → '+money(row.now)+'（'+signed(delta([row]))+'）').join('\n'):'当前没有可比较的对象。');
+    next='先核对变动最大对象的订单量和商品销量，再检查同期费用或活动变化。';
+    if(top)evidence={page:'orders',period:'0',...(isOwner?{channel:top.name}:{store:top.name})};
+  }else if(item.id==='ads'){
+    if(followup)return adEvidenceAnswer(followup);
+    const result=adEvidenceAnswer();
+    return result.evidence?{...result,text:heading+'\n'+result.text+'\n'+adEvidenceAnswer('接下来该核查什么').text}:result;
+  }else if(item.id==='inventory'){
+    const risks=rows.map(inventoryRecord).filter(row=>row.days!==null&&row.days<7).sort((a,b)=>a.days-b.days).slice(0,3);
+    text='按 11-18 08:00 库存快照及近 7 天日均销量估算。\n'+(risks.length?risks.map(row=>
+      row.store+' · '+row.sku+'：'+row.days.toFixed(1)+' 天，可售 '+row.available+' 件，在途 '+row.inbound+' 件').join('\n'):'当前没有可售天数不足 7 天的记录。');
+    next='对照预计到货与可售天数，优先处理预计先售罄、后到货的店铺与商品。';
+    evidence={page:'inventory',status:inventoryStatus[0]};
+  }else if(item.id==='refund'){
+    const bySku=new Map();
+    for(const row of rows){
+      const sku=row.product.sku,entry=bySku.get(sku)??{sku,name:row.product.name,now:0,before:0};
+      entry.now+=periodValue(row,'refund',0,null);entry.before+=periodValue(row,'refund',1,null);
+      bySku.set(sku,entry);
+    }
+    const top=[...bySku.values()].filter(row=>delta([row])>0).sort((a,b)=>delta([b])-delta([a])).slice(0,3);
+    text=heading+'\n'+(top.length?top.map(row=>row.sku+' · '+row.name+'：'+money(row.before)+' → '+money(row.now)+'（'+signed(delta([row]))+'）').join('\n'):'当前没有退款金额增加的商品。');
+    next='按商品对照退款原因、店铺和原订单，确认增量是否集中在同一类问题。';
+    evidence={page:'orders',view:'refunds',period:'0',search:top[0]?.sku};
+  }else{
+    const margins=comparables.filter(row=>row.now>0).sort((a,b)=>a.contribution/a.now-b.contribution/b.now),lowest=margins[0];
+    text='近 7 天（11-11 至 11-17），贡献利润未扣除公司固定支出。\n'+margins.map(row=>
+      row.name+'：销售额 '+money(row.now)+'，贡献利润 '+signed(row.contribution)+'，利润率 '+adRate(row.contribution,row.now)).join('\n');
+    if(lowest){
+      const largest=[['商品成本',lowest.cost],['平台费用',lowest.fees],['履约费用',lowest.fulfillment],['广告费用',lowest.ads],['退款',lowest.refund]].sort((a,b)=>b[1]-a[1])[0];
+      text+='\n利润率最低的是 '+lowest.name+'，其最大扣减项是'+largest[0]+' '+money(largest[1])+'。';
+      evidence={page:'settlements',channel:lowest.name};
+    }
+    next='先核对该渠道的主要扣减项和销售结构，再判断需要调整成本还是投放。';
+  }
+  return {text:/核查|怎么做/.test(followup)?next:text+(followup?'':'\n\n建议：'+next),source:followup?'沿用上文':'直接查询',evidence};
+}
 function seedAnalysis(){
   const previous=state.role;
   for(const role of Object.keys(profiles)){
@@ -1010,8 +1099,7 @@ function render(){
   if(Object.hasOwn(businessPages,state.page))renderBusinessDirectory(stores,channels);
   renderComparisons(audience,stores,issues,costRows);
   renderDetailEntries();
-  const prompts=audience==='owner'?recommended.owner:[storeQuestion,adEvidenceQuestion,...recommended.operator];
-  byId('suggestions').innerHTML=prompts.map(prompt=>`<button type="button" data-question="${prompt}">${prompt}</button>`).join('');
+  byId('suggestions').innerHTML=promptCards();
   byId('autoInsight').textContent=audience==='owner'?state.cache.get(keyFor(cases[1],'profit')):audience==='lead'?state.cache.get(keyFor(cases[1],'storeSales')):state.cache.get(baseKey(stock));
   byId('question').placeholder='例如：'+(audience==='owner'?recommended.owner[0]:storeQuestion);
   applyLayout();
@@ -1260,13 +1348,20 @@ function renderConversation(scroll=false){
   const turns=threadTurns(key,thread),pane=byId('aiReply');
   renderThreadList(key,thread);
   const offset=pane.scrollTop;
-  pane.innerHTML=turns.map(turn=>`<article class="conversation-turn"><div class="user-message"><strong>${esc(turn.question)}</strong>${Array.isArray(turn.attachments)&&turn.attachments.length?`<br><small>附件：${turn.attachments.map(esc).join('、')}</small>`:''}</div><div class="assistant-message">${turn.route&&turn.route!=='经营分析助手'?`<span class="turn-route">${esc(turn.route)}${turn.source?` · ${esc(turn.source)}`:''}</span><br>`:''}${turn.context?`<small>${esc(turn.context)}</small><br>`:''}${esc(turn.conclusion??'正在分析…')}${turn.evidence?.page==='ads'?'<br>'+businessLink('ads','查看广告明细',{store:turn.evidence.store,search:turn.evidence.search,period:turn.evidence.period}):''}</div></article>`).join('')||'<p class="note">输入问题开始分析，得到结论后可在这里继续追问。</p>';
+  pane.innerHTML=turns.map(turn=>`<article class="conversation-turn"><div class="user-message"><strong>${esc(turn.question)}</strong>${Array.isArray(turn.attachments)&&turn.attachments.length?`<br><small>附件：${turn.attachments.map(esc).join('、')}</small>`:''}</div><div class="assistant-message">${turn.route&&turn.route!=='经营分析助手'?`<span class="turn-route">${esc(turn.route)}${turn.source?` · ${esc(turn.source)}`:''}</span><br>`:''}${turn.context?`<small>${esc(turn.context)}</small><br>`:''}${esc(turn.conclusion??'正在分析…')}${analysisEvidenceLink(turn.evidence)}</div></article>`).join('')
+    ||'<div class="prompt-welcome"><h3>推荐问题</h3>'+promptCards()+'</div>';
   pane.scrollTop=scroll?pane.scrollHeight:offset;
   const last=turns.at(-1);
   const anchor=turns.findLast(turn=>turn.anchor&&typeof turn.conclusion==='string');
   const prompts=last&&typeof last.conclusion!=='string'?[]:attachmentSessions.has(attachmentKey(key,thread))?['附件概览','汇总附件销售额']:
-    anchor?.anchor===storeQuestion||anchor?.anchor===adEvidenceQuestion?['依据是什么？','接下来该核查什么？']:!anchor?[state.role==='owner'?recommended.owner[0]:storeQuestion]:[];
+    anchor&&(anchor.anchor===storeQuestion||anchor.anchor===adEvidenceQuestion||findAnalysisPrompt(anchor.anchor))?['依据是什么？','接下来该核查什么？']:[];
   byId('followupSuggestions').innerHTML=prompts.map(question=>`<button type="button" data-chat-prompt="${esc(question)}">${esc(question)}</button>`).join('');
+}
+function analysisEvidenceLink(evidence){
+  if(!evidence||!Object.hasOwn(businessPages,evidence.page)||(evidence.page==='settlements'&&state.role!=='owner'))return '';
+  const {page,store,channel,search,period,status,view}=evidence;
+  const label=view==='refunds'?'查看退款明细':({orders:'查看订单明细',ads:'查看广告明细',inventory:'查看库存明细',settlements:'查看结算与费用'})[page];
+  return '<br>'+businessLink(page,label,{store,channel,search,period,status,view});
 }
 const isContextFollowup=question=>/^(依据是什么|这结论的依据是什么|上条结论的依据是什么|为什么|结论是什么|再说一遍|具体数据是什么|具体数据呢|接下来该核查什么|下一步怎么做|那我该怎么做)$/.test(normalizeQuestion(question));
 async function recordQuestion(question,respond,context='',attachments=[],anchor,thread=activeThread(conversationKey()),route){
@@ -1304,9 +1399,17 @@ byId('followupSuggestions').onclick=event=>{
   const prompt=event.target.closest('[data-chat-prompt]');
   if(prompt){byId('question').value=prompt.dataset.chatPrompt;byId('question').focus()}
 };
+function chooseAnalysisPrompt(event){
+  const id=event.target.closest('[data-analysis-prompt]')?.dataset.analysisPrompt;
+  return visibleAnalysisPrompts().find(item=>item.id===id);
+}
 byId('suggestions').onclick=event=>{
-  const button=event.target.closest('[data-question]');
-  if(button)openAnalysis(button.dataset.question);
+  const item=chooseAnalysisPrompt(event);
+  if(item)openAnalysis(item.prompt);
+};
+byId('aiReply').onclick=event=>{
+  const item=chooseAnalysisPrompt(event);
+  if(item){byId('question').value=item.prompt;byId('question').focus()}
 };
 function summarizeAttachments(files){
   return files.map(file=>{
@@ -1340,6 +1443,8 @@ async function ask(question,previous,files=[],route=selectedAnalysis()){
   }
   if(isContextFollowup(question)){
     if(!previous)return {text:'这段对话还没有可追问的结论。请先发起一项分析。',source:'需要上文'};
+    const priorPrompt=findAnalysisPrompt(previous.anchor);
+    if(priorPrompt)return runAnalysisPrompt(priorPrompt,normalized);
     const priorTarget=knownQuestions.get(normalizeQuestion(previous.anchor));
     if(previous.anchor===adEvidenceQuestion)return adEvidenceAnswer(normalized);
     if(priorTarget?.[1]==='storeSales'){
@@ -1353,6 +1458,8 @@ async function ask(question,previous,files=[],route=selectedAnalysis()){
     if(priorTarget?.[1]==='drivers')return {text:'上轮问题涉及 '+cases[priorTarget[0]].sku+'。'+answer(cases[priorTarget[0]],'facts'),source:'沿用上文'};
     return {text:'这项分析目前没有更多可核对的证据。请指定要核查的指标、店铺或 SKU。',source:'需要上文'};
   }
+  const analysisPrompt=findAnalysisPrompt(question);
+  if(analysisPrompt)return runAnalysisPrompt(analysisPrompt);
   if(normalized===normalizeQuestion(recommended.operator[2])){
     state.queries++;return {text:'当前范围近 7 天销售额为 '+money(sum(channelRows(),'now'))+'。',source:'直接查询'};
   }
@@ -1367,7 +1474,7 @@ async function ask(question,previous,files=[],route=selectedAnalysis()){
     return {text:'示例同步数据：当前查询范围共 '+matches.length+' 条刊登，'+unpaired.length+' 条未配对。未配对记录可以按店铺核查，但不能据此归到某个公司 SKU。详见「在售商品」的配对状态筛选。',source:'直接查询'};
   }
   const target=knownQuestions.get(normalized)??(
-    /店铺|哪家店/.test(normalized)&&/销售|业绩|下降|跌|波动/.test(normalized)?[1,'storeSales']:null);
+    normalized.length<60&&!/\d+天|本月|上月|昨天|昨日/.test(normalized)&&/店铺|哪家店/.test(normalized)&&/销售|业绩|下降|跌|波动/.test(normalized)?[1,'storeSales']:null);
   if(!target&&/附件|文件/.test(normalized))return {text:'当前对话没有可读取的附件。刷新后只保留文件名和结论；请重新添加原文件。',source:'需要附件'};
   if(!target)return {text:'当前可分析渠道销售变化、SKU 日均销量、库存分配及到货延迟；有相应权限也可查询贡献利润。请尝试推荐问题。',source:'暂无法回答'};
   return request(cases[target[0]],target[1],route);
@@ -1387,6 +1494,7 @@ byId('askForm').onsubmit=async event=>{
   byId('question').value='';clearAttachmentDraft();
   const normalized=normalizeQuestion(question);
   const about=isContextFollowup(question)?previous?.anchor:
+    findAnalysisPrompt(question)?question:
     normalized===normalizeQuestion(adEvidenceQuestion)?adEvidenceQuestion:
     /店铺|哪家店/.test(normalized)&&/销售|业绩|下降|跌|波动/.test(normalized)?storeQuestion:
     knownQuestions.has(normalized)?question:undefined;
@@ -1673,7 +1781,7 @@ function adEvidenceAnswer(followup=''){
   }
   if(followup)return {text:'依据是 11-11 至 11-17 有权查看的 '+campaigns.length+' 个活动，按花费降序排序。'+top.name+' 花费 '+money(top.cost)+'，归因销售额 '+money(top.attributed)+'，ACOS 用这两个原始值相除。',source:'沿用上文',evidence};
   return {text:top.store+'的「'+top.name+'」花费最高，本期 '+money(top.cost)+'，前期 '+money(prior.cost)+'，归因销售额由 '+
-    money(prior.attributed)+' 变为 '+money(top.attributed)+'，ACOS 为 '+adRate(top.cost,top.attributed)+'。可打开活动明细，检查具体广告组及推广商品的花费和产出。',
+    money(prior.attributed)+' 变为 '+money(top.attributed)+'，ACOS 由 '+adRate(prior.cost,prior.attributed)+' 变为 '+adRate(top.cost,top.attributed)+'。可打开活动明细，检查具体广告组及推广商品的花费和产出。',
     source:'直接查询',evidence};
 }
 function renderBusinessDirectory(stores,channels){
